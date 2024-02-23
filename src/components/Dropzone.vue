@@ -28,6 +28,7 @@
             </n-text>
         </n-upload-dragger>
     </n-upload>
+    <div>{{ result }}</div>
 </template>
 
 <script lang="ts">
@@ -53,6 +54,7 @@ export default defineComponent({
         const fileListDisabled = ref(false)
         const uploadRef = ref<UploadInst | null>(null)
         const uploadedImages = ref<UploadFileInfo[]>([])
+        const result = ref('')
 
         const handleChange = (data: { fileList: UploadFileInfo[] }) => {
             fileListLengthRef.value = data.fileList.length
@@ -73,6 +75,7 @@ export default defineComponent({
             try {
                 const response = await axios.post('https://bt-backend-18d86ef18244.herokuapp.com/grisa', formData);
                 console.log('RESPONSE:' + JSON.stringify(response.data));
+                result.value = JSON.stringify(response.data);
                 clearFileList()
             } catch (error) {
                 console.error('ERROR:' + error);
@@ -93,6 +96,7 @@ export default defineComponent({
             uploadImg,
             fileListDisabled,
             clearFileList,
+            result,
             uploadedImages
         }
     }
