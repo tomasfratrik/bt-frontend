@@ -35,6 +35,8 @@ import { defineComponent, ref } from 'vue'
 import { NUpload, NIcon, NP, NText, NUploadDragger, NButton } from 'naive-ui'
 import { ArchiveOutline as ArchiveIcon } from '@vicons/ionicons5'
 import type { UploadInst, UploadFileInfo } from 'naive-ui'
+import { showErrorToast } from '@/utils/toast'
+import { serverAddress } from '@/utils/server'
 import axios from 'axios'
 
 
@@ -72,9 +74,15 @@ export default defineComponent({
 
 
             try {
-                const response = await axios.post('https://bt-backend-18d86ef18244.herokuapp.com/grisa', formData);
-                console.log('RESPONSE:' + JSON.stringify(response.data));
+                const response = await axios.post(`${serverAddress}/grisa/upload`, formData);
+                const data = response.data
+
                 clearFileList()
+                if (data.error) {
+                    showErrorToast(data.error)
+                    return
+                }
+          
             } catch (error) {
                 console.error('ERROR:' + error);
                 clearFileList()

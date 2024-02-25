@@ -5,7 +5,7 @@
         <n-tabs type="segment" animated>
             <!-- <n-tabs type="segment"> -->
             <n-tab-pane name="URL" tab="URL">
-                wonderwall
+                <UrlInput />
             </n-tab-pane>
             <n-tab-pane name="Image" tab="Image">
                 <Dropzone />
@@ -17,7 +17,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { NTabs, NTabPane } from 'naive-ui'
-import Dropzone from '../components/Dropzone.vue'
+import Dropzone from '@/components/Dropzone.vue'
+import UrlInput from '@/components/UrlInput.vue'
 
 
 const selectedTab = ref('oasis')

@@ -10,13 +10,15 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@vicons/fluent": "^0.12.0",
     "@vicons/ionicons5": "^0.12.0",
     "axios": "^1.6.7",
     "dropzone": "^6.0.0-beta.2",
     "express": "^4.18.2",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5",
-    "vue-tabz": "^1.2.0"
+    "vue-tabz": "^1.2.0",
+    "vue3-toastify": "^0.2.1"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
