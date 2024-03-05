@@ -82,6 +82,7 @@ export default defineComponent({
                     showErrorToast(data.error)
                     return
                 }
+                console.log(data)
           
             } catch (error) {
                 console.error('ERROR:' + error);

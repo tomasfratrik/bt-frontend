@@ -76,9 +76,6 @@ export default defineComponent({
 
         const searchImageClick = async () => {
             const selectedImage = imageUrl.value.find((img) => img.selected)
-            // if (selectedImage) {
-            //     console.log(selectedImage.url)
-            // }
             try {
                 const response = await axios.post(`${serverAddress}/grisa/upload`, {
                     url: selectedImage?.url
@@ -88,7 +85,7 @@ export default defineComponent({
                     showErrorToast(data.error)
                     return
                 }
-                console.log(data.text)
+                console.log(data)
             } catch (error) {
                 console.error('ERROR:' + error)
             }
