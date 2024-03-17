@@ -32,8 +32,87 @@
         </n-input-group>
 </template>
 
-<script lang="ts">
-import { ref, defineComponent } from 'vue'
+
+<script setup lang="ts">
+import { ref, defineProps, defineEmits } from 'vue'
+import { NInput, NSpace, NIcon, NButton, 
+        NInputGroup, NDrawer, NDrawerContent, NImage, NImageGroup  } from 'naive-ui'
+import  { GlobeSearch20Filled } from '@vicons/fluent'
+import { Search } from '@vicons/ionicons5'
+import { showErrorToast } from '@/utils/toast'
+import { serverAddress} from '@/utils/server'
+import axios from 'axios'
+
+interface ImageInfo {
+  id: number;
+  selected: boolean;
+  url: string;
+}
+
+// const props = defineProps(['emit']); // Assuming that you pass the emit function as a prop
+const emit = defineEmits(['sendData'])
+
+const search_url = ref('')
+const imageUrl = ref<ImageInfo[]>([]);
+const displayImages = ref(false)
+
+const handleImageClick = (image: ImageInfo) => {
+  imageUrl.value.forEach((img) => {
+    img.selected = false
+  })
+  image.selected = true
+}
+
+const searchImageClick = async () => {
+  const selectedImage = imageUrl.value.find((img) => img.selected)
+  try {
+    const response = await axios.post(`${serverAddress}/grisa/upload`, {
+      url: selectedImage?.url
+    })
+    const data = response.data;
+    if (data.error) {
+      showErrorToast(data.error)
+      return
+    }
+    emit('sendData', data)
+  } catch (error) {
+    console.error('ERROR:' + error)
+  }
+  finally {
+    displayImages.value = false
+  }
+}
+
+const handleClick = async () => {
+  imageUrl.value = []
+  try {
+    const response = await axios.post(`${serverAddress}/get_images_from_url`, {
+      url: search_url.value
+    })
+
+    const data = response.data;
+    if (data.error) {
+      showErrorToast(data.error)
+      return
+    } else if (data.image_urls.length === 0) {
+      showErrorToast('No images found on the page')
+      return 
+    }
+
+    for (let i = 0; i < data.image_urls.length; i++) {
+      imageUrl.value.push({ id: i, selected: false, url: data.image_urls[i] });
+    }
+
+    displayImages.value = true
+  } catch (error) {
+    console.error('ERROR:' + error)
+  }
+}
+</script>
+
+
+<!-- <script lang="ts">
+import { ref, defineComponent, defineEmits } from 'vue'
 import { NInput, NSpace, NIcon, NButton, 
         NInputGroup, NDrawer, NDrawerContent, NImage, NImageGroup  } from 'naive-ui'
 import  { GlobeSearch20Filled } from '@vicons/fluent'
@@ -48,23 +127,26 @@ interface ImageInfo {
   url: string; // Assuming the URL is of type string
 }
 
+
 export default defineComponent({
-  components: {
-    Search,
-    GlobeSearch20Filled,
-    NIcon,
-    NInput,
-    NInputGroup,
-    NSpace,
-    NDrawer,
-    NDrawerContent,
-    NImage,
-    NImageGroup,
-    NButton,
-  },
+    components: {
+        Search,
+        GlobeSearch20Filled,
+        NIcon,
+        NInput,
+        NInputGroup,
+        NSpace,
+        NDrawer,
+        NDrawerContent,
+        NImage,
+        NImageGroup,
+        NButton,
+    },
+    emits: ['sendData'],
     setup() {
         const search_url = ref('')
         const imageUrl = ref<ImageInfo[]>([]);
+        const emit = defineEmits(['sendData'])
         const displayImages = ref(false)
 
         const handleImageClick = (image: ImageInfo) => {
@@ -85,7 +167,8 @@ export default defineComponent({
                     showErrorToast(data.error)
                     return
                 }
-                console.log(data)
+                // to this line
+                emit('sendData', data)
             } catch (error) {
                 console.error('ERROR:' + error)
             }
@@ -132,11 +215,12 @@ export default defineComponent({
             handleImageClick,
             searchImageClick,
             handleClick,
+            emit,
         }
     }
 
 })
-</script>
+</script> -->
 
 <style>
 .input-wrapper {

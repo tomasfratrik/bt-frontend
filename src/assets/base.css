@@ -6,10 +6,21 @@
   margin: 0 ;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #e6e9ec;
+  min-height: 100vh; /* Ensures that the background color covers the entire viewport height */
+}
+
+
 body {
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
 
 
   --primary-color: #51a2f9;
+  
+
+  --max-width: 1235px;
 }
