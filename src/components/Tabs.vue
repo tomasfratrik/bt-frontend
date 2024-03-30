@@ -28,23 +28,22 @@ const handleIncomingData = (report: any) => {
 }
 
 </script>
-<!-- <script setup lang="ts">
-import { ref } from 'vue'
-import { NTabs, NTabPane } from 'naive-ui'
-import Dropzone from '@/components/Dropzone.vue'
-import UrlInput from '@/components/UrlInput.vue'
-
-
-const selectedTab = ref('oasis')
-
-const tabsThemeOverrides = {
-    size: 'large'
-}
-//   const tabsSize = ref('large')
-const paneClass = 'tab-pane'
-</script> -->
   
 <style scoped>
+.tabs-wrapper {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    /* background-color: #f0f0f0; */
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: var(--secondary-font);
+    text-transform: uppercase;
+    font-size: 1.2rem;
+
+}
 /* Change color of selected tab to blue */
 .tab-pane {
     /* color: blue; */

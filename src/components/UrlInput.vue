@@ -1,46 +1,66 @@
 <template>
-    <h4>Input URL of advertisement from supported sites</h4>
+  <main>
+
+    <div class="header">
+      <p>Input URL of advertisement from supported website</p>
+      <p>See <router-link to="/supported_portals"> supported web portals</router-link> </p>
+    </div>
 
         <!-- <n-drawer v-model:show="displayImages" :width="512"> -->
         <n-drawer v-model:show="displayImages" style="width: 90%">
-            <n-drawer-content>
-            <template #header>
-                Select image by clicking on it
-            </template>
-            
-                <n-space>
-                <!-- <div class="img-container" v-for="image in imageUrl" :key=""> -->
-                <div class="img-container" v-for="image in imageUrl" :key="image.id">
-                    <!-- <n-image width="150" height="150" :src="image"/>  -->
-                    <img @click="handleImageClick(image)" :src="image.url" alt="image" :class="{ active: image.selected }"/> 
-                </div>
-                </n-space>
+            <n-drawer-content :style="{ width: '100%' }">
+              <loading v-model:active="isLoading"
+                :can-cancel="false"
+                :color="spinColor"
+                :is-full-page="fullPage"/>
 
-            <template #footer>
-                <div>
-                    <n-button @click="searchImageClick" type="primary" size="large">Search</n-button>
-                </div>
-            </template>
+              <template #header>
+                  Select image that best depicts the property
+              </template>
+              
+                  <n-space>
+                  <!-- <div class="img-container" v-for="image in imageUrl" :key=""> -->
+                  <div class="img-container" v-for="image in imageUrl" :key="image.id">
+                      <!-- <n-image width="150" height="150" :src="image"/>  -->
+                      <img @click="handleImageClick(image)" :src="image.url" alt="image" :class="{ active: image.selected }"/> 
+                  </div>
+                  </n-space>
+
+              <template #footer>
+                  <div>
+                    <n-button :disabled="btnIsDisabled" 
+                      @click="searchImageClick" 
+                      type="primary" 
+                      :style="{ width:'100%' }"
+                      bloc
+                      size="large">
+                      Search
+                    </n-button>
+                  </div>
+              </template>
             </n-drawer-content>
         </n-drawer>
 
         <n-input-group style="display: flex; justify-content: center;">
             <n-input placeholder="Enter URL..." :style="{ width: '100%' }" v-model:value="search_url" />
-            <n-button type="primary" @click="handleClick">
+            <n-button :disabled="!search_url" :loading="searchLoading" type="primary" @click="handleClick">
                 Search
             </n-button>
         </n-input-group>
+  </main>
 </template>
 
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref, defineProps, defineEmits, watch } from 'vue'
 import { NInput, NSpace, NIcon, NButton, 
         NInputGroup, NDrawer, NDrawerContent, NImage, NImageGroup  } from 'naive-ui'
 import  { GlobeSearch20Filled } from '@vicons/fluent'
 import { Search } from '@vicons/ionicons5'
 import { showErrorToast } from '@/utils/toast'
 import { serverAddress} from '@/utils/server'
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
 import axios from 'axios'
 
 interface ImageInfo {
@@ -49,23 +69,40 @@ interface ImageInfo {
   url: string;
 }
 
+const isLoading = ref(false)
+const fullPage = ref(false)
+const spinColor = ref('#3eaf7c')
+
 // const props = defineProps(['emit']); // Assuming that you pass the emit function as a prop
 const emit = defineEmits(['sendData'])
 
 const search_url = ref('')
-const imageUrl = ref<ImageInfo[]>([]);
 const displayImages = ref(false)
+const imageUrl = ref<ImageInfo[]>([]);
 
+
+// watch(() => props.showTutorial, (newValue) => {
+//     internalShow.value = newValue
+// })
 const handleImageClick = (image: ImageInfo) => {
   imageUrl.value.forEach((img) => {
     img.selected = false
   })
   image.selected = true
+  btnIsDisabled.value = false
+}
+
+const btnIsDisabled = ref(true)
+const searchLoading = ref(false)
+
+const disabledBtn = () => {
+  return imageUrl.value.find((img) => img.selected) === undefined
 }
 
 const searchImageClick = async () => {
   const selectedImage = imageUrl.value.find((img) => img.selected)
   try {
+    isLoading.value = true
     const response = await axios.post(`${serverAddress}/grisa/upload`, {
       url: selectedImage?.url
     })
@@ -80,11 +117,14 @@ const searchImageClick = async () => {
   }
   finally {
     displayImages.value = false
+    isLoading.value = false
   }
 }
 
 const handleClick = async () => {
   imageUrl.value = []
+  btnIsDisabled.value = true
+  searchLoading.value = true
   try {
     const response = await axios.post(`${serverAddress}/get_images_from_url`, {
       url: search_url.value
@@ -107,122 +147,34 @@ const handleClick = async () => {
   } catch (error) {
     console.error('ERROR:' + error)
   }
+  finally {
+    searchLoading.value = false
+  }
 }
 </script>
 
 
-<!-- <script lang="ts">
-import { ref, defineComponent, defineEmits } from 'vue'
-import { NInput, NSpace, NIcon, NButton, 
-        NInputGroup, NDrawer, NDrawerContent, NImage, NImageGroup  } from 'naive-ui'
-import  { GlobeSearch20Filled } from '@vicons/fluent'
-import { Search } from '@vicons/ionicons5'
-import { showErrorToast } from '@/utils/toast'
-import { serverAddress} from '@/utils/server'
-import axios from 'axios'
-
-interface ImageInfo {
-  id: number;
-  selected: boolean;
-  url: string; // Assuming the URL is of type string
-}
-
-
-export default defineComponent({
-    components: {
-        Search,
-        GlobeSearch20Filled,
-        NIcon,
-        NInput,
-        NInputGroup,
-        NSpace,
-        NDrawer,
-        NDrawerContent,
-        NImage,
-        NImageGroup,
-        NButton,
-    },
-    emits: ['sendData'],
-    setup() {
-        const search_url = ref('')
-        const imageUrl = ref<ImageInfo[]>([]);
-        const emit = defineEmits(['sendData'])
-        const displayImages = ref(false)
-
-        const handleImageClick = (image: ImageInfo) => {
-            imageUrl.value.forEach((img) => {
-                img.selected = false
-            })
-            image.selected = true
-        }
-
-        const searchImageClick = async () => {
-            const selectedImage = imageUrl.value.find((img) => img.selected)
-            try {
-                const response = await axios.post(`${serverAddress}/grisa/upload`, {
-                    url: selectedImage?.url
-                })
-                const data = response.data;
-                if (data.error) {
-                    showErrorToast(data.error)
-                    return
-                }
-                // to this line
-                emit('sendData', data)
-            } catch (error) {
-                console.error('ERROR:' + error)
-            }
-        }
-
-        const handleClick = async () => {
-            try {
-                const response = await axios.post(`${serverAddress}/get_images_from_url`, {
-                    url: search_url.value
-                })
-                
-                const data = response.data;
-                if (data.error) {
-                    showErrorToast(data.error)
-                    return
-                }
-                else if (data.image_urls.length === 0) {
-                    showErrorToast('No images found on the page')
-                    return
-                }
-                
-
-                for (let i = 0; i < data.image_urls.length; i++) {
-                    // imageUrl = [{id: selected: false, url: data.image_urls[i]}, ...]
-                    imageUrl.value.push({id: i, selected: false, url: data.image_urls[i]});
-                }
-     
-
-                // imageUrls.value = data.image_urls
-                displayImages.value = true
-                // console.log(data.image_urls)
-
-            } catch (error) {
-                console.error('ERROR:' + error)
-            }
-
-        }
-        return {
-            Search,
-            GlobeSearch20Filled,
-            search_url,
-            displayImages,
-            imageUrl,
-            handleImageClick,
-            searchImageClick,
-            handleClick,
-            emit,
-        }
-    }
-
-})
-</script> -->
 
 <style>
+
+.header a {
+  color: var(--primary-color);
+  /* text-decoration: none; */
+
+}
+
+.header {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: var(--grey-color-font);
+}
+
+main {
+  font-family: var(--primary-font);
+  text-transform: none;
+  font-size: 1.1rem;
+}
+
 .input-wrapper {
     display: flex;
     justify-content: center;
@@ -239,8 +191,8 @@ export default defineComponent({
     width: 150px;
     height: 150px;
     /* object-fit: cover; */
-    opacity: 0.8;
-    transition: border 0.3s ease;
+    opacity: 0.7;
+    transition: border 0.2s ease;
     border: 5px solid transparent;
 }
 /* .animated {

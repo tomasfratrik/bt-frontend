@@ -90,11 +90,11 @@ const getValue = (object: any, string: string, defaultValue =  '') => {
   flex-wrap: wrap;
   margin: 0 auto;
 
-  max-height: 1000px;
+  /* max-height: 1000px;
   overflow-y: scroll;
   border: 5px solid grey;
   border-radius: 20px;
-  border-style: double;
+  border-style: double; */
 }
 
 .report-wrapper {

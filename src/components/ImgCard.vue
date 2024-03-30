@@ -11,6 +11,7 @@
             <div class="lower">
                 <div class="center-wrapper">
                     <h2 class="website-name">{{ image.website_name }}</h2>
+                    <h3>{{ image.ssim }}</h3>
                     <div class="score-bar">
                         <n-progress
                             type="line"

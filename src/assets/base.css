@@ -19,8 +19,13 @@ body {
   font-size: 16px;
 
 
-  --primary-color: #51a2f9;
+  --primary-color: rgb(20, 155, 90);
+  --secondary-color: rgb(164, 223, 194);
   
+  --primary-font: 'Roboto', sans-serif;
+  --secondary-font: 'Montserrat', sans-serif;
+
+  --grey-color-font: #606060;
 
   --max-width: 1235px;
 }

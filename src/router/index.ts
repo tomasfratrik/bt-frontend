@@ -13,6 +13,11 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: () => import('../views/AboutView.vue')
+    },
+    {
+      path: '/supported_portals',
+      name: 'supported_portals',
+      component: () => import('../views/SupportedPortals.vue')
     }
   ]
 })
