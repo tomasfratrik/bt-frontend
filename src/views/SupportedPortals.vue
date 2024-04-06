@@ -37,7 +37,8 @@
 <script setup lang="ts">
 import { ref, markRaw } from 'vue'
 import { NTable, NButton } from 'naive-ui'
-import  Reality  from '@/components/tutorials/reality.vue'
+import  RealityCZ  from '@/components/tutorials/RealityCZ.vue'
+import  NehnutelnostiSK  from '@/components/tutorials/NehntelnostiSK.vue'
 
 function getComponentForPortal(portal: any) {
   return portal.component
@@ -50,15 +51,16 @@ function toggleTutorial(portal: any) {
 const portals = ref([
     {
         name: 'reality',
-        component: markRaw(Reality),
+        component: markRaw(RealityCZ),
         tld: 'cz',
         country: 'Czech republic',
         showTutorial: false,
     },
     {
-        name: 'test',
+        name: 'Nehnutelnosti',
+        component: markRaw(NehnutelnostiSK),
         tld: 'sk',
-        country: 'japan',
+        country: 'Slovakia',
         showTutorial: false,
     }
 ])
