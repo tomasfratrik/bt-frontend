@@ -5,36 +5,58 @@
       <Tabs class="tabs" @sendReport="handleReport"/>
     </div>
 
+
     <div class="report-wrapper">
       <div v-if="showReport">
         <h1 class="report-header">Report</h1>
+        <n-tabs class="tabs-report" type="segment" size="small" animated>
+            <n-tab-pane name="Your" tab="Your image">
+              <div class="report-header">
+                <h3>Your image</h3>
+              </div>
+              <div class="report-items">
+                <div class="" v-for="image in getValue(report, 'images.posted_images')" :key="image.position">
+                  <ImgCard :type="postedString" :image="image"/>
+                </div>
+              </div>
 
-        <div class="report-header">
-          <h3>Your images</h3>
-        </div>
-        <div class="report-items">
-          <div class="" v-for="image in getValue(report, 'images.posted_images')" :key="image.position">
-            <ImgCard :type="postedString" :image="image"/>
-          </div>
-        </div>
+            </n-tab-pane>
+            <n-tab-pane name="source" tab="Source images">
+              <div class="report-header">
+                <h3>Source images</h3>
+              </div>
+              <div class="report-items">
+                <!-- <div class="" v-for="image in getValue(report, 'images.source_images')" :key="image.position">
+                  <ImgGroupCard :type="sourceString" :image="image"/>
+                </div> -->
+                <div class="" v-for="portal in getValue(report, 'images.source_images')" :key="portal">
+                  <!-- if portal has only 1 item do imgcard else img group card -->
+                  <div v-if="portal.images.length === 1">
+                    <ImgCard :type="sourceString" :image="portal.images[0]"/>
+                  </div>
+                  <div v-else>
+                    <ImgGroupCard :data="portal"/>
+                  </div>
+                </div>
+              </div>
 
-        <div class="report-header">
-          <h3>Source images</h3>
-        </div>
-        <div class="report-items">
-          <div class="" v-for="image in getValue(report, 'images.source_images')" :key="image.position">
-            <ImgCard :type="sourceString" :image="image"/>
-          </div>
-        </div>
+            </n-tab-pane>
+            <n-tab-pane name="similar" tab="Similar images">
+              <div class="report-header">
+                <h3>Similiar images</h3>
+                <!-- <input type="number" v-model="similarityThreshold" placeholder="Similarity threshold" min="0" max="100" step="1"> -->
+              </div>
+              <div class="report-items">
+                <div class="" v-for="portal in getValue(report, 'images.similar_images')" :key="portal">
+                  <ImgGroupCard :data="portal"/>
+                </div>
+              </div>
 
-        <div class="report-header">
-          <h3>Similiar images</h3>
-        </div>
-        <div class="report-items">
-          <div class="" v-for="image in getValue(report, 'images.similar_images')" :key="image.position">
-            <ImgCard :type="similiarString" :image="image"/>
-          </div>
-        </div>
+
+            </n-tab-pane>
+        </n-tabs>
+
+
 
       </div>
     </div>
@@ -44,12 +66,15 @@
 
 <script setup lang="ts">
 import Tabs from '@/components/Tabs.vue'
+import { NTabs, NTabPane } from 'naive-ui'
+import { getValue } from '@/utils/utils'
 import { Images } from '@vicons/ionicons5';
 import  { Share24Regular } from '@vicons/fluent'
 import _ from 'lodash'
 import { ref } from 'vue'
 
 import ImgCard from '@/components/ImgCard.vue'
+import ImgGroupCard from '@/components/ImgGroupCard.vue'
 
 
 const report = ref<any>({})
@@ -60,6 +85,7 @@ const postedString = ref("posted")
 const sourceString = ref("source")
 const similiarString = ref("similiar")
 
+const similarityThreshold = ref(0)
 // Utility function to safely access nested properties
 
 const handleReport = (r: any) => {
@@ -68,14 +94,19 @@ const handleReport = (r: any) => {
   showReport.value = true
 }
 
-const getValue = (object: any, string: string, defaultValue =  '') => {
-  return _.get(object, string, defaultValue)
-}
+// const getValue = (object: any, string: string, defaultValue =  '') => {
+//   return _.get(object, string, defaultValue)
+// }
 </script>
 
 
 <style scoped>
 
+.tabs-report {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  font-family: var(--secondary-font);
+}
 .report-header {
   width: var(--max-width);
   margin: 0 auto;

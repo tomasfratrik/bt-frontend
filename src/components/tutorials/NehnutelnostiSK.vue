@@ -8,7 +8,7 @@
                 </div>
             </template>
             <main>
-                <h1>Reality</h1>
+                <h1>Nehnutelnosti</h1>
                 <div class="issues">
                     <h2>Known issues</h2>
                     <ul>
@@ -18,15 +18,15 @@
                 
                 <div class="tutorial">
                     <h2>Tutorial</h2>
-                    <p> Go to <a href="https://www.reality.cz" target="_blank">reality.cz</a> 
+                    <p> Go to <a href="https://www.nehnutelnosti.sk" class="link" target="_blank">reality.cz</a> 
                         from this site you can pick any property, and display it so it looks like on the picture below.
                     </p>
                 </div>
-                <img src="./assets/reality.png" alt="Reality.cz" >
+                <img src="./assets/nehnutelnosti_sk.png" alt="nehnutelnosti.sk" >
                 <div class="sources">
                     <h2>Used sources</h2>
                     <ul>
-                        <li> <a href="https://www.reality.cz/prodej/byty/mesto-Brno/YKL-009582/?c=3" target="_blank">Displayed photo</a> </li>
+                        <li> <a href="https://www.nehnutelnosti.sk/detail/Jueng40mPlG/levelreal-na-predaj-3-izbovy-apartmanovy-byt-so-zahradkou-novostavba" target="_blank">Displayed photo</a> </li>
                     </ul>
                 </div>
             </main>

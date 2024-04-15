@@ -22,7 +22,7 @@
                         from this site you can pick any property, and display it so it looks like on the picture below.
                     </p>
                 </div>
-                <img src="./assets/reality.png" alt="Reality.cz" >
+                <img src="./assets/reality_cz.png" alt="Reality.cz" >
                 <div class="sources">
                     <h2>Used sources</h2>
                     <ul>

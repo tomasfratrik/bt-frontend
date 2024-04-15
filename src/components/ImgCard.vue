@@ -1,7 +1,8 @@
 <template>
     <div class="ImgCard">
-        <ImgModal :type="props.type" :image="props.image" v-if="showModal" @closeModal="closeModal" />
-        <div class="card-wrapper">
+        <ImgModal @closeCurrentModal="closeCurrentModal" :internalShow="showModal" :type="props.type" :image="props.image" @closeModal="closeModal" />
+        <!-- <div class="card-wrapper"> -->
+        <div :class="{ 'card-wrapper-small': props.scale === 'small'  }" class="card-wrapper">
             <div class="upper">
                 <div class="redirect-wrapper" @click="openWebsite">
                     <n-icon :size="40" :component="Share24Regular"/>
@@ -9,20 +10,26 @@
                 <img :src="image.display_photo_url" alt="image" />
             </div>
             <div class="lower">
+                <div class="portal-name">
+                    {{ props.image.domain }}
+                </div>
                 <div class="center-wrapper">
-                    <h2 class="website-name">{{ image.website_name }}</h2>
-                    <h3>{{ image.ssim }}</h3>
+                    <!-- <h2 class="website-name">{{ image.website_name }}</h2>
+                    <> --!-- <h3>{{ image.ssim }}</h3> -->
                     <div class="score-bar">
                         <n-progress
-                            type="line"
-                            :show-indicator="false"
-                            status="success"
+                            type="circle"
+                            :stroke-width="10"
+                            :color="getColorFromPercentage(image.total_points_percentage)"
                             :percentage="image.total_points_percentage"
                         />
                     </div>
-                    <n-button strong secondary type="success" @click="toggleModal">
+                    <!-- <n-button dashed @click="toggleModal" tabindex="-1">
                         Detail
-                    </n-button>
+                    </n-button> -->
+                    <button class="btn-detail" @click="toggleModal">Detail</button>
+                    <!-- <p>{{ image.delete }} </p>  -->
+                    <!-- <p> {{ image.ssim }}</p> -->
                 </div>
             </div>
         </div>
@@ -32,11 +39,13 @@
 
 <script setup lang="ts">
 // Import ref from Vue
-import { ref, defineProps } from 'vue';
+import { ref, defineProps, defineEmits } from 'vue';
 import { NIcon, NProgress, NButton } from 'naive-ui'
 import  { Share24Regular } from '@vicons/fluent'
-
 import ImgModal from '@/components/ImgModal.vue'
+
+import { getColorFromPercentage } from '@/utils/utils';
+import type { get } from 'node_modules/axios/index.cjs';
 
 const showModal = ref(false)
 const toggleModal = () => {
@@ -44,9 +53,16 @@ const toggleModal = () => {
 }
 const closeModal = () => {
     showModal.value = false
+    emit('closeGroupModal')
 }
 
-const props = defineProps(['image', 'type'])
+const closeCurrentModal = () => {
+    showModal.value = false
+}
+
+const props = defineProps(['image', 'type', 'scale'])
+
+const emit = defineEmits(['closeGroupModal'])
 
 const openWebsite = () => {
     const url = props.image.website_url
@@ -57,47 +73,44 @@ const openWebsite = () => {
 
 <style scoped>
 
-/* .card-wrapper .upper {
-} */
+.portal-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    font-weight: bold;
+}
 
 .lower .website-name {
-    /* text-align: center; */
     margin: 0;
     font-size: 20px;
 }
 
 .center-wrapper {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    /* max-width: 90%;
-    margin: auto; */
+    gap: 5px;
     padding: 10px;
 }
 
 .score-bar {
-    width: 240px;
+    width: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
-button {
-    width: 100%;
-}
-
-.upper img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+.card-wrapper-small .score-bar {
+    width: 80px;
 }
 
 
 .redirect-wrapper {
     position: absolute;
     background-color: white;
-    /* border-radius: 100%; */
     width: 50px;
     height: 50px;
     top: 10px;
@@ -117,20 +130,61 @@ button {
 .redirect-wrapper:hover {
     background-color: #f0f0f0;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
-    color: rgb(0, 110, 255);
+    color: var(--primary-color);
 }
+
 
 .card-wrapper {
     min-width: 240px;
     max-width: 270px;
+    width: 260px;
     height: 330px;
-    /* border: 1px solid #f0f0f0; */
     position: relative;
     border-radius: 15px;
-    /* border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px; */
     margin: 10px;
     background-color: white;
 }
+
+.btn-detail {
+    border: 1px solid grey;
+    border-radius: 100px;
+    background-color: transparent;
+    color: var(--grey-color-font);
+    font-size: 15px;
+    padding: 2px 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-detail:hover {
+    border: 1px dashed var(--primary-color);
+    color: var(--primary-color);
+
+}
+
+.card-wrapper button {
+    width: 100px;
+    height: 40px;
+}
+
+.card-wrapper-small {
+    /* height: 280px; */
+    width: 200px;
+    height: 310px;
+}
+.upper img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.card-wrapper-small button {
+    width: 100px;
+    height: 60px;
+}
+
 
 </style>

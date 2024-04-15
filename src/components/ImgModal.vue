@@ -1,82 +1,101 @@
 <template>
     <div class="img-modal">
-        <div class="backdrop" @click.self="closeModal">
-            <div class="modal-window">
-                <div class="close-wrapper" @click="closeModal">
-                    <n-icon :size="40" :component="CloseCircleOutline"/>
-                </div>
+        <!-- <div class="backdrop" @click.self="closeModal">
+            <div class="modal-window"> -->
+        <n-modal v-model:show="props.internalShow">
+            <n-card
+            style="max-width: 900px; min-height: 600px; background-color: var(--bg-clr);"
+            :bordered="false"
+            title=" "
+            size="huge"
+            role="dialog"
+            aria-modal="true"
+            >
+                <template #header-extra>
+                    <div class="close-wrapper" @click="closeModal">
+                        <n-icon :size="50" :component="CloseCircleOutline"/>
+                    </div>
+                    <div class="back-wrapper" @click="closeCurrentModal">
+                        <n-icon :size="50" :component="ArrowBackCircleOutline"/>
+                    </div>
+                </template>
+            <!-- Content -->
                 <div class="left-right">
                     <div class="left">
                         <img :src="props.image.display_photo_url" alt="image" />
-                        <table>
+  
+                    </div>
+                    <div class="right">
+                      <table>
                             <tr>
                                 <td class="key">Score: </td>
                                 <td class="val score">{{ props.image.points }} ({{ props.image.total_points_percentage }}%) </td>
+                            </tr>
+                            <tr>
+                                <td class="key">URL: </td>
+                                <td class="val">
+                                    <a class="link" :href="props.image.website_url" target="_blank">Click to redirect</a>
+                                </td>
                             </tr>
                             <tr v-if="props.type === sourceString">
                                 <td class="key">Image resolution: </td>
                                 <td class="val">{{ props.image.resolution[0] }} x {{ props.image.resolution[1] }}</td>
                             </tr>
                             <tr>
-                                <td class="key">Website: </td>
+                                <td class="key">Portal: </td>
                                 <td class="val">{{ props.image.website_name }}</td>
                             </tr>
                             <tr>
                                 <td class="key">Domain: </td>
                                 <td class="val">{{ props.image.domain }}</td>
                             </tr>
-                            <tr>
-                                <td class="key">URL: </td>
-                                <td class="val">
-                                    <!-- <a :href="props.image.website_url" target="_blank">{{ props.image.website_url }}</a> -->
-                                    <a :href="props.image.website_url" target="_blank">Click to redirect</a>
-                                </td>
-                            </tr>
                         </table>
-                    </div>
-                    <div class="right">
                         <!-- <div class="img-container" v-for="image in imageUrl" :key="image.id"> -->
-                        <h2>Points</h2>
-                        <h3 v-if="noPointsGiven">No points given</h3>
-                        
-                        <div class="modules" v-for="(moduleName, index) in Object.keys(props.image.point_modules_detected)" :key="index">
-                            <div class="module-header">
-                                <h3>{{ props.image.point_modules_detected[moduleName].name }} </h3>
-                                <n-switch size="small" v-model:value="showDetails[moduleName]">   
-                                    <template #checked>
-                                        Hide
-                                    </template>
+                        <div class="down">
+                            <h2>Points</h2>
+                            <h3 v-if="noPointsGiven">No points given</h3>
+                            
+                            <div class="modules" v-for="(moduleName, index) in Object.keys(props.image.point_modules_detected)" :key="index">
+                                <div class="module-header">
+                                    <h3>{{ props.image.point_modules_detected[moduleName].name }} </h3>
+                                    <n-switch size="small" v-model:value="showDetails[moduleName]">   
+                                        <template #checked>
+                                            Hide
+                                        </template>
 
-                                    <template #unchecked>
-                                        Details
-                                    </template>
-                                </n-switch>
-                            </div>
-                            <n-collapse-transition v-show="showDetails[moduleName]">
-                                <div v-show="showDetails[moduleName]">
-                                    <span class="header-points"> ({{ props.image.point_modules_detected[moduleName].points }} points) </span>
-                                    <p> {{props.image.point_modules_detected[moduleName].description}}</p>
+                                        <template #unchecked>
+                                            Details
+                                        </template>
+                                    </n-switch>
                                 </div>
-                            </n-collapse-transition>
+                                <n-collapse-transition v-show="showDetails[moduleName]">
+                                    <div v-show="showDetails[moduleName]">
+                                        <span class="header-points"> ({{ props.image.point_modules_detected[moduleName].points }} points) </span>
+                                        <p> {{props.image.point_modules_detected[moduleName].description}}</p>
+                                    </div>
+                                </n-collapse-transition>
+                            </div>
                         </div>
 
                     </div>
-
                 </div>
-            </div>
-        </div>
+
+            </n-card>
+        </n-modal>
     </div>
 </template>
 
 
 <script setup lang="ts">
 import { ref, defineProps, defineEmits, onMounted, computed, watch } from 'vue'
-import { NButton, NIcon, NSwitch, NCollapseTransition } from 'naive-ui'
+import { NButton, NIcon, NSwitch, NCollapseTransition, NModal, NCard } from 'naive-ui'
 import { CloseCircleOutline } from '@vicons/ionicons5'
+import { ArrowBackCircleOutline } from '@vicons/ionicons5'
 
-const emit = defineEmits(['closeModal'])
+const emit = defineEmits(['closeModal', 'closeCurrentModal'])
 
-const props = defineProps(['image', 'type'])
+const props = defineProps(['image', 'type', 'internalShow'])
+
 
 const postedString = ref("posted")
 const sourceString = ref("source")
@@ -86,7 +105,9 @@ const closeModal = () => {
     emit('closeModal')
 }
 
-const show = ref(false)
+const closeCurrentModal = () => {
+    emit('closeCurrentModal')
+}
 
 const showDetails = ref<{ [moduleName: string]: boolean }>({})
 
@@ -94,7 +115,6 @@ onMounted(() => {
     for (const point_module in props.image.point_modules_detected) {
         showDetails.value[point_module] = false
     }
-    console.log("type: " + props.type.value)
 })
 
 
@@ -108,7 +128,7 @@ const noPointsGiven = computed(() => {
 <style scoped>
 
 img {
-    max-width: 400px;
+    max-width: 350px;
     max-height: 400px;
 }
 
@@ -125,7 +145,6 @@ img {
 
 .score {
     color: var(--primary-color);
-    font-weight: bold;
     text-shadow: 0 0 1px var(--primary-color);
 }
 
@@ -154,17 +173,24 @@ td {
     width: 50%;
     height: 100%;
     padding: 10px;
+
 }
 
-.left {
-    border-right: thick solid grey;
+table, .down {
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
 }
+
+/* .left {
+    border-right: thick solid var(--primary-color);
+} */
 
 .left-right {
     display: flex;
     justify-content: space-between;
     height: 100%;
-    align-items: flex-start;
+    /* align-items: flex-start; */
 }
 
 .close-wrapper {
@@ -175,11 +201,23 @@ td {
     transition: all 0.2s ease;
 }
 
+.back-wrapper {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.close-wrapper:hover, .back-wrapper:hover {
+    color: var(--primary-color);
+}
+
 .close-wrapper:hover {
     color: red;
 }
 
-.modal-window {
+/* .modal-window {
     background-color: white;
     width: 1000px;
     height: 600px;
@@ -200,6 +238,12 @@ td {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 100;
+} */
+
+.right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 </style>

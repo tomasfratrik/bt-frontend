@@ -1,0 +1,124 @@
+<template>
+    <div class="img-group-card">
+        <div class="card-wrapper">
+            <ImgGroupModal :internalShow="showGroupModal" @close="closeGroupModal" :data="props.data"/>
+            <div class="upper">
+                <!-- <div class="redirect-wrapper" @click="openWebsite">
+                    <n-icon :size="40" :component="Share24Regular"/>
+                </div> -->
+                <div class="count">
+                    <h5>{{ props.data.count }}x</h5>
+                </div>
+                <div class="score-bar">
+                    <n-progress
+                        type="circle"
+                        :show-indicator="false"
+                        status="success"
+                        :color = "getColorFromPercentage(props.data.images[0].total_points_percentage)"
+                        :stroke-width="15"
+                        :percentage="props.data.images[0].total_points_percentage"
+                    />
+                </div>
+                <img :src="props.data.images[0].display_photo_url" alt="image" />
+            </div>
+            <div class="lower">
+                <div class="center-wrapper">
+                    <h2 class="website-name">{{ props.data.domain }}</h2>
+                    <n-button strong secondary type="success" @click="toggleGroupModal">
+                        Show Group
+                    </n-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { ref, defineProps, defineEmits, onMounted, watch } from 'vue'
+import { NIcon, NProgress, NButton } from 'naive-ui'
+import { getValue } from '@/utils/utils'
+import ImgGroupModal from '@/components/ImgGroupModal.vue'
+import { getColorFromPercentage } from '@/utils/utils'
+
+const props = defineProps(['portal', 'data'])
+
+const showGroupModal = ref(false)
+
+const toggleGroupModal = () => {
+    showGroupModal.value = !showGroupModal.value
+}
+const closeGroupModal = () => {
+    showGroupModal.value = false
+}
+
+
+</script>
+
+<style scoped>
+
+.lower .website-name {
+    margin: 0;
+    font-size: 15px;
+}
+
+.center-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+button {
+    width: 100%;
+}
+
+.upper img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+
+.count {
+    position: absolute;
+    color: black;
+    top: 10px;
+    left: 10px;
+    font-family: 'Roboto Mono', monospace;
+    background-color: white;
+    border-radius: 5px;
+    font-size: 25px;
+    z-index: 3;
+    padding: 5px 10px;
+}
+
+.score-bar {
+    position: absolute;
+    background-color: rgb(8, 35, 22);
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    top: 8px;
+    right: 10px;
+    z-index: 1;
+    display: flex;
+    transition: all 0.3s;
+
+}
+
+.card-wrapper {
+    min-width: 240px;
+    max-width: 270px;
+    /* height: 330px; */
+    width: 260px;
+    position: relative;
+    border-radius: 15px;
+    margin: 10px;
+    background-color: white;
+}
+
+</style>

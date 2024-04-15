@@ -3,7 +3,7 @@
 
     <div class="header">
       <p>Input URL of advertisement from supported website</p>
-      <p>See <router-link to="/supported_portals"> supported web portals</router-link> </p>
+      <p>See <router-link to="/supported_portals" class="link"> supported web portals</router-link> </p>
     </div>
 
         <!-- <n-drawer v-model:show="displayImages" :width="512"> -->
@@ -104,7 +104,8 @@ const searchImageClick = async () => {
   try {
     isLoading.value = true
     const response = await axios.post(`${serverAddress}/grisa/upload`, {
-      url: selectedImage?.url
+      selected_url: selectedImage?.url,
+      urls: imageUrl.value.map((img) => img.url)
     })
     const data = response.data;
     if (data.error) {
@@ -157,11 +158,9 @@ const handleClick = async () => {
 
 <style>
 
-.header a {
+/* .header a {
   color: var(--primary-color);
-  /* text-decoration: none; */
-
-}
+} */
 
 .header {
   margin-top: 20px;

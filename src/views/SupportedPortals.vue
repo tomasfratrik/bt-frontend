@@ -3,12 +3,11 @@
         <main>
             <h2>These are portals we currently support</h2>
             <p>Copy link from particullar advertisement, if unsure check our tutorial</p>
-            <p>If you want a particular portal to be supported, write to <b>us</b></p>
             <n-table :bordered="false" :single-line="false">
                 <thead>
                 <tr>
                     <th>Name</th>
-                    <th>tld</th>
+                    <th>Redirect to portal</th>
                     <th>Country</th>
                     <th>Tutorial</th>
                 </tr>
@@ -16,7 +15,8 @@
                 <tbody>
                     <tr v-for="portal in portals" :key="portal.name">
                         <td>{{ portal.name }}</td>
-                        <td>{{ portal.tld }}</td>
+
+                        <td> <a class="link" :href="portal.link" target="_blank">Link</a></td>
                         <td>{{ portal.country }}</td>
                         <td>
                             <n-button type="primary" @click="toggleTutorial(portal)">
@@ -38,7 +38,7 @@
 import { ref, markRaw } from 'vue'
 import { NTable, NButton } from 'naive-ui'
 import  RealityCZ  from '@/components/tutorials/RealityCZ.vue'
-import  NehnutelnostiSK  from '@/components/tutorials/NehntelnostiSK.vue'
+import  NehnutelnostiSK  from '@/components/tutorials/NehnutelnostiSK.vue'
 
 function getComponentForPortal(portal: any) {
   return portal.component
@@ -50,16 +50,18 @@ function toggleTutorial(portal: any) {
 
 const portals = ref([
     {
-        name: 'reality',
+        name: 'reality.cz',
         component: markRaw(RealityCZ),
         tld: 'cz',
+        link: 'https://www.reality.cz/',
         country: 'Czech republic',
         showTutorial: false,
     },
     {
-        name: 'Nehnutelnosti',
+        name: 'nehnutelnosti.sk',
         component: markRaw(NehnutelnostiSK),
         tld: 'sk',
+        link: 'https://www.nehnutelnosti.sk/',
         country: 'Slovakia',
         showTutorial: false,
     }
@@ -68,6 +70,10 @@ const portals = ref([
 </script>
 
 <style scoped>
+th {
+    font-weight: 600;
+}
+
 h2 {
     margin-top: 20px;
     margin-bottom: 20px;
