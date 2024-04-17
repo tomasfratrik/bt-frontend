@@ -1,5 +1,5 @@
 <template>
-    <n-drawer v-model:show="internalShow" style="width: 70%">
+    <n-drawer v-model:show="internalShow" style="width: 100%">
         <n-drawer-content>
             <template #header>
                 <div>

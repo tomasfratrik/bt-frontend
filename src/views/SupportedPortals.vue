@@ -7,7 +7,7 @@
                 <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Redirect to portal</th>
+                    <th>Url</th>
                     <th>Country</th>
                     <th>Tutorial</th>
                 </tr>
@@ -19,8 +19,12 @@
                         <td> <a class="link" :href="portal.link" target="_blank">Link</a></td>
                         <td>{{ portal.country }}</td>
                         <td>
-                            <n-button type="primary" @click="toggleTutorial(portal)">
-                                Show Tutorial
+                            <n-button type="primary" circle @click="toggleTutorial(portal)">
+                                <template #icon>
+                                    <n-icon size="30">
+                                        <book-20-filled />
+                                    </n-icon>
+                                </template>
                             </n-button>
                         </td>
                         <component :is="getComponentForPortal(portal)" 
@@ -36,7 +40,9 @@
 
 <script setup lang="ts">
 import { ref, markRaw } from 'vue'
-import { NTable, NButton } from 'naive-ui'
+import { NTable, NButton, NIcon } from 'naive-ui'
+import { Book20Filled } from '@vicons/fluent'
+// import { Book } from ''
 import  RealityCZ  from '@/components/tutorials/RealityCZ.vue'
 import  NehnutelnostiSK  from '@/components/tutorials/NehnutelnostiSK.vue'
 
@@ -70,6 +76,10 @@ const portals = ref([
 </script>
 
 <style scoped>
+table {
+    font-family:monospace; 
+}
+
 th {
     font-weight: 600;
 }
@@ -81,6 +91,8 @@ h2 {
 main {
     max-width: 1400px;
     margin: 0 auto;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: var(--grey-color-font);
 }
 
 </style>

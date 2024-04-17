@@ -10,12 +10,10 @@
                 <img :src="image.display_photo_url" alt="image" />
             </div>
             <div class="lower">
-                <div class="portal-name">
+                <!-- <div class="portal-name">
                     {{ props.image.domain }}
-                </div>
+                </div> -->
                 <div class="center-wrapper">
-                    <!-- <h2 class="website-name">{{ image.website_name }}</h2>
-                    <> --!-- <h3>{{ image.ssim }}</h3> -->
                     <div class="score-bar">
                         <n-progress
                             type="circle"
@@ -24,12 +22,7 @@
                             :percentage="image.total_points_percentage"
                         />
                     </div>
-                    <!-- <n-button dashed @click="toggleModal" tabindex="-1">
-                        Detail
-                    </n-button> -->
                     <button class="btn-detail" @click="toggleModal">Detail</button>
-                    <!-- <p>{{ image.delete }} </p>  -->
-                    <!-- <p> {{ image.ssim }}</p> -->
                 </div>
             </div>
         </div>

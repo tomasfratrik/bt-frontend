@@ -50,7 +50,6 @@
                                 <td class="val">{{ props.image.domain }}</td>
                             </tr>
                         </table>
-                        <!-- <div class="img-container" v-for="image in imageUrl" :key="image.id"> -->
                         <div class="down">
                             <h2>Points</h2>
                             <h3 v-if="noPointsGiven">No points given</h3>
@@ -154,7 +153,6 @@ table {
 
 td {
     max-width: 500px;
-    /* put td up */
     vertical-align: top;
     max-height: 200px;
 }
@@ -182,15 +180,11 @@ table, .down {
     border-radius: 10px;
 }
 
-/* .left {
-    border-right: thick solid var(--primary-color);
-} */
 
 .left-right {
     display: flex;
     justify-content: space-between;
     height: 100%;
-    /* align-items: flex-start; */
 }
 
 .close-wrapper {
@@ -217,33 +211,32 @@ table, .down {
     color: red;
 }
 
-/* .modal-window {
-    background-color: white;
-    width: 1000px;
-    height: 600px;
-    z-index: 101;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 10px;
-    padding: 20px;
-}
-
-.backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 100;
-} */
-
 .right {
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .left-right {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .left, .right {
+        width: 100%;
+    }
+    .key {
+        text-align: left;
+        height: 20px;
+        white-space: nowrap;
+    }
+
+    table, .down {
+        padding: 3px;
+    }
+
+
 }
 
 </style>

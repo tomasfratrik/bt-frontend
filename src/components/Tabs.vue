@@ -23,7 +23,6 @@ import UrlInput from '@/components/UrlInput.vue'
 const emit = defineEmits(['sendReport'])
 
 const handleIncomingData = (report: any) => {
-    // console.log("DATA:" + data.images)
     emit('sendReport', report)
 }
 

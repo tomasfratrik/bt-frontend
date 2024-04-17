@@ -1,38 +1,71 @@
-<script setup lang="ts">
-</script>
-
 <template>
     <div class="main-nav-wrapper">
         <nav>
+            <div class="hamburger-nav">
+                <router-link to="/">
+                    <h2 class="short-logo">FH</h2>
+                </router-link>
+                <!-- <n-icon class="Menu-icon" size="40" onClick="toggleNav" :component="Menu"/> -->
+                <n-icon class="Menu-icon" size="40" @click="toggleNav" :component="Menu"/>
+            </div>
             <div class="nav-wrapper">
                 <div class="nav-item nav-logo">
-                    <h2 class="full-logo">Fraud Detector</h2>
-                    <h2 class="short-logo">FD</h2>
+                    <router-link to="/">
+                        <h2 class="full-logo">Fraud Helper</h2>
+                    </router-link>
                 </div>
 
-                    <div class="nav-content">
-                        <div class="nav-item">
-                            <router-link to="/">
-                                <span class="nav-button">Home</span>
-                            </router-link>
-                        </div>
-                        <div class="nav-item">
-                            <router-link to="/about">
-                                <span class="nav-button">About</span>
-                            </router-link>
-                        </div>
-                        <div class="nav-item">
-                            <router-link to="/supported_portals">
-                                <span class="nav-button">Supported portals</span>
-                            </router-link>
-                        </div>
+                <div class="nav-content" v-if="showNav">
+                    <div class="nav-item">
+                        <router-link to="/">
+                            <div class="nav-button" @click="toggleNav" >Home</div>
+                        </router-link>
                     </div>
+                    <div class="nav-item">
+                        <router-link to="/about">
+                            <div class="nav-button" @click="toggleNav" >About</div>
+                        </router-link>
+                    </div>
+                    <div class="nav-item">
+                        <router-link to="/supported_portals">
+                            <div class="nav-button" @click="toggleNav" >Supported portals</div>
+                        </router-link>
+                    </div>
+                </div>
 
 
             </div>
         </nav>
     </div>
 </template>
+
+
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { NIcon } from 'naive-ui'
+import { Menu } from '@vicons/ionicons5'
+
+const showNav = ref(true)
+
+const toggleNav = () => {
+    if (window.innerWidth <= 768){
+        showNav.value = !showNav.value
+    }
+}
+
+onMounted(() => {
+    handleResize(); // Call initially to set the initial state
+    window.addEventListener('resize', handleResize);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleResize);
+});
+
+const handleResize = () => {
+    showNav.value = window.innerWidth > 768;
+}
+</script>
 
 <style scoped>
 
@@ -105,11 +138,73 @@ nav {
     display: none;
 }
 
+.hamburger-nav {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 20px;
+    background-color: var(--primary-color);
+    /* background-color: rgb(17, 65, 48); */
+    color: white;
+}
+
+.Menu-icon {
+    color: white;
+    transition: all 0.2s;
+}
+
+.Menu-icon:hover {
+    text-shadow: 0 0 10px white;
+    color: rgb(17, 65, 48);
+}
+
 @media (max-width: 768px) {
     .full-logo { display: none; }
     .short-logo { display: block; }
     .main-nav-wrapper {
         position: sticky;
+
+        /* position: fixed; */
+        top: 0;
+        z-index: 100;
     }
+    .nav-logo {
+        display: none;
+    }
+    .nav-content {
+        /* flex-direction: column; */
+        display: block;
+        width: 100%;
+    }
+
+    .nav-wrapper {
+        display: block;
+        margin: 0;
+    }
+
+    .hamburger-nav {
+        display: flex;
+        border-bottom: 2px solid white;
+    }
+
+    /* .nav-item {
+        padding: 10px;
+    } */
+
+    .nav-button {
+        width: 100%;
+        height: 50px;
+        /* text-align: center; */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.15s;
+    }
+    .nav-button:hover {
+        background-color: rgb(17, 65, 48);
+        color: white;
+    }
+
+
 }
 </style>

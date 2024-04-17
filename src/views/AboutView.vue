@@ -1,8 +1,26 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <div class="wrapper">
+      <h1>Real Estate Fraud Helper</h1>
+      <p>This project is a work of bachelor thesis</p>
+      <p>For full documentation visit: </p>
+    </div>
   </div>
 </template>
 
+<script setup lang="ts">
+</script>
+
 <style>
+.wrapper {
+  max-width: var(--max-width);
+  background-color: white;
+  border-radius: 25px;
+  padding: 20px;
+  font-family: Arial, Helvetica, monospace;
+  font-size: 1.2em;
+  color: var(--grey-color-font);
+  margin: 0 auto;
+  margin-top: 20px;
+}
 </style>

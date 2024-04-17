@@ -2,7 +2,7 @@
     <div class="img-group-modal">
         <n-modal v-model:show="props.internalShow">
             <n-card
-            style="max-width: 900px; min-height: 600px; background-color: var(--bg-clr);"
+            style="max-width: 900px; min-height: 700px; background-color: var(--bg-clr);"
             title=" "
             :bordered="false"
             size="huge"
@@ -54,11 +54,8 @@ const closeGroupModal = () => {
     position: absolute;
     top: 10px;
     left: 10px;
-    /* cursor: pointer; */
-    transition: all 0.2s ease;
     background-color: white;
     padding: 10px;
-    /* margin: 5px; */
 }
 
 

@@ -6,8 +6,7 @@
       <p>See <router-link to="/supported_portals" class="link"> supported web portals</router-link> </p>
     </div>
 
-        <!-- <n-drawer v-model:show="displayImages" :width="512"> -->
-        <n-drawer v-model:show="displayImages" style="width: 90%">
+        <n-drawer v-model:show="displayImages" style="width: 100%">
             <n-drawer-content :style="{ width: '100%' }">
               <loading v-model:active="isLoading"
                 :can-cancel="false"
@@ -17,16 +16,18 @@
               <template #header>
                   Select image that best depicts the property
               </template>
-              
-                  <n-space>
-                  <!-- <div class="img-container" v-for="image in imageUrl" :key=""> -->
-                  <div class="img-container" v-for="image in imageUrl" :key="image.id">
-                      <!-- <n-image width="150" height="150" :src="image"/>  -->
-                      <img @click="handleImageClick(image)" :src="image.url" alt="image" :class="{ active: image.selected }"/> 
-                  </div>
-                  </n-space>
-
+                  <!-- <n-space> -->
+                    <div class="img-container-wrapper">
+                      <div class="img-container" v-for="image in imageUrl" :key="image.id">
+                          <img @click="handleImageClick(image)" :src="image.url" alt="image" :class="{ active: image.selected }"/> 
+                      </div>
+                    </div>
+                  <!-- </n-space> -->
               <template #footer>
+                  <div class="btn-close">
+                    <n-button @click="buttonClose" color="red" type="primary" size="large">Close</n-button>
+                  </div>
+
                   <div>
                     <n-button :disabled="btnIsDisabled" 
                       @click="searchImageClick" 
@@ -43,6 +44,10 @@
 
         <n-input-group style="display: flex; justify-content: center;">
             <n-input placeholder="Enter URL..." :style="{ width: '100%' }" v-model:value="search_url" />
+            <!-- clear button -->
+            <n-button style="margin-left: 10px;" @click="search_url = ''" :disabled="!search_url" >
+              Clear
+            </n-button>
             <n-button :disabled="!search_url" :loading="searchLoading" type="primary" @click="handleClick">
                 Search
             </n-button>
@@ -69,21 +74,21 @@ interface ImageInfo {
   url: string;
 }
 
+const buttonClose = () => {
+  displayImages.value = false
+}
+
 const isLoading = ref(false)
 const fullPage = ref(false)
 const spinColor = ref('#3eaf7c')
 
-// const props = defineProps(['emit']); // Assuming that you pass the emit function as a prop
 const emit = defineEmits(['sendData'])
 
 const search_url = ref('')
+const saved_search_url = ref('')
 const displayImages = ref(false)
 const imageUrl = ref<ImageInfo[]>([]);
 
-
-// watch(() => props.showTutorial, (newValue) => {
-//     internalShow.value = newValue
-// })
 const handleImageClick = (image: ImageInfo) => {
   imageUrl.value.forEach((img) => {
     img.selected = false
@@ -119,6 +124,7 @@ const searchImageClick = async () => {
   finally {
     displayImages.value = false
     isLoading.value = false
+    search_url.value = saved_search_url.value
   }
 }
 
@@ -126,6 +132,7 @@ const handleClick = async () => {
   imageUrl.value = []
   btnIsDisabled.value = true
   searchLoading.value = true
+  saved_search_url.value = search_url.value
   try {
     const response = await axios.post(`${serverAddress}/get_images_from_url`, {
       url: search_url.value
@@ -158,9 +165,9 @@ const handleClick = async () => {
 
 <style>
 
-/* .header a {
-  color: var(--primary-color);
-} */
+.btn-close {
+  margin-right: 20px;
+}
 
 .header {
   margin-top: 20px;
@@ -177,25 +184,25 @@ main {
 .input-wrapper {
     display: flex;
     justify-content: center;
-    /* justify-content: space-between; */
     align-items: center;
-    /* margin-top: 20px; */
-    /* max-width: 100%; */
+}
 
+.img-container-wrapper {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .img-container img {
-    /* max-width: 150px;
-    max-height: 150px; */
-    width: 150px;
-    height: 150px;
-    /* object-fit: cover; */
+    width: 200px;
+    height: 200px;
     opacity: 0.7;
     transition: border 0.2s ease;
     border: 5px solid transparent;
 }
-/* .animated {
-} */
 
 .img-container .active {
     opacity: 1;
