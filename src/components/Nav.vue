@@ -32,8 +32,6 @@
                         </router-link>
                     </div>
                 </div>
-
-
             </div>
         </nav>
     </div>
@@ -109,7 +107,6 @@ nav {
 
 .main-nav-wrapper {
     width: 100%;
-    /* background-color: white; */
     background-color: var(--primary-color);
     padding: 0;
     margin: 0;
@@ -120,6 +117,7 @@ nav {
     align-items: center;
     height: 100%;
     margin: 0 30px;
+    padding: 7px;
 }
 .nav-content {
     display: flex;
@@ -144,7 +142,6 @@ nav {
     align-items: center;
     padding: 3px 20px;
     background-color: var(--primary-color);
-    /* background-color: rgb(17, 65, 48); */
     color: white;
 }
 
@@ -160,19 +157,20 @@ nav {
 
 @media (max-width: 768px) {
     .full-logo { display: none; }
+
     .short-logo { display: block; }
+
     .main-nav-wrapper {
         position: sticky;
-
-        /* position: fixed; */
         top: 0;
         z-index: 100;
     }
+
     .nav-logo {
         display: none;
+
     }
     .nav-content {
-        /* flex-direction: column; */
         display: block;
         width: 100%;
     }
@@ -187,10 +185,6 @@ nav {
         border-bottom: 2px solid white;
     }
 
-    /* .nav-item {
-        padding: 10px;
-    } */
-
     .nav-button {
         width: 100%;
         height: 50px;
@@ -204,7 +198,5 @@ nav {
         background-color: rgb(17, 65, 48);
         color: white;
     }
-
-
 }
 </style>

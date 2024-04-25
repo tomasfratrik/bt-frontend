@@ -1,12 +1,15 @@
 <template>
     <div class="img-group-card">
         <div class="card-wrapper">
-            <ImgGroupModal :internalShow="showGroupModal" @close="closeGroupModal" :data="props.data"/>
+            <ImgGroupModal :threshold="props.threshold" :internalShow="showGroupModal" @close="closeGroupModal" :data="props.data"/>
             <div class="upper">
                 <!-- <div class="redirect-wrapper" @click="openWebsite">
                     <n-icon :size="40" :component="Share24Regular"/>
                 </div> -->
-                <div class="count">
+                <div v-if="props.type == 'similar'" class="count">
+                    <h5>{{ props.count }}x</h5>
+                </div>
+                <div v-else class="count">
                     <h5>{{ props.data.count }}x</h5>
                 </div>
                 <div class="score-bar">
@@ -33,14 +36,15 @@
     </div>
 </template>
 
+
+
 <script setup lang="ts">
 import { ref, defineProps, defineEmits, onMounted, watch } from 'vue'
-import { NIcon, NProgress, NButton } from 'naive-ui'
-import { getValue } from '@/utils/utils'
+import { NProgress, NButton } from 'naive-ui'
 import ImgGroupModal from '@/components/ImgGroupModal.vue'
 import { getColorFromPercentage } from '@/utils/utils'
 
-const props = defineProps(['portal', 'data'])
+const props = defineProps(['portal', 'data', 'threshold', 'count', 'type'])
 
 const showGroupModal = ref(false)
 
@@ -51,8 +55,9 @@ const closeGroupModal = () => {
     showGroupModal.value = false
 }
 
-
 </script>
+
+
 
 <style scoped>
 

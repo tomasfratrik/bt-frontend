@@ -6,7 +6,6 @@
     </div>
 
     <n-drawer v-model:show="showRawReport" style="width: 100%" >
-      <!-- <n-drawer-content :style="{ width: '100%' }"> -->
       <n-drawer-content>
         <template #header>
           <div class="btn-copy">
@@ -42,7 +41,6 @@
             <div>
               Report
             </div>
-            <!-- <button> -->
             <n-button @click="showRawReport = true">
 
               RAW    
@@ -50,7 +48,6 @@
                 <n-icon size="20" :component="Clipboard"/>
               </template>
             </n-button>
-            <!-- </button> -->
           </div>
         </div>
         <n-tabs class="tabs-report" type="segment" size="medium" animated>
@@ -63,23 +60,28 @@
 
             </n-tab-pane>
             <n-tab-pane name="source" tab="Source images">
+              <p>Images were found while looking at the source of your posted image.</p>
               <div class="report-items">
-                <div class="" v-for="portal in getValue(report, 'images.source_images')" :key="portal">
-                  <ImgGroupCard :data="portal"/>
-                </div>
+                <template v-for="portal in getValue(report, 'images.source_images')" :key="portal">
+                  <ImgGroupCard type="source" :threshold="0" :data="portal"/>
+                </template>
               </div>
 
             </n-tab-pane>
             <n-tab-pane name="similar" tab="Similar images">
-              <div class="report-items">
-                <div class="" v-for="portal in getValue(report, 'images.similar_images')" :key="portal">
-                  <ImgGroupCard :data="portal"/>
+              <p>Images that are similiar. You can change the similarity index to filter them</p>
+              <h3 class="similarity-header">Similarity - {{ ssimThresholdPercentage }} %</h3>
+                <n-space vertical>
+                  <n-slider v-model:value="ssimThresholdPercentage" :step="1" />
+                  <n-input-number class="similarity-input" v-model:value="ssimThresholdPercentage" size="small" />
+                </n-space>
+                <div class="report-items">
+                  <template v-for="portal in getValue(report, 'images.similar_images')" :key="portal">
+                    <ImgGroupCard type="similar" :count="calculateCount(portal)" v-if="showGroupCard(portal)" :threshold="ssimThreshold" :data="portal"/>
+                  </template>
                 </div>
-              </div>
-
-
-            </n-tab-pane>
-        </n-tabs>
+              </n-tab-pane>
+          </n-tabs>
 
 
 
@@ -89,35 +91,48 @@
   </main>
 </template>
 
+
+
 <script setup lang="ts">
-import { ref } from 'vue'
-import Vue from 'vue'
+import { ref, watch } from 'vue'
 import Tabs from '@/components/Tabs.vue'
-import { NTabs, NIcon, NTabPane, NDrawer, NDrawerContent, NButton } from 'naive-ui'
+import { NTabs, NIcon, NTabPane, NDrawer, NDrawerContent, NButton, 
+  NInputNumber, NSlider, NSpace } from 'naive-ui'
+import ImgCard from '@/components/ImgCard.vue'
+import ImgGroupCard from '@/components/ImgGroupCard.vue'
 import { Clipboard } from '@vicons/ionicons5'
 import { getValue } from '@/utils/utils'
 import { showSuccessToast } from '@/utils/toast'
-import { Images } from '@vicons/ionicons5';
-import  { Share24Regular } from '@vicons/fluent'
 import _ from 'lodash'
-
-
-import ImgCard from '@/components/ImgCard.vue'
-import ImgGroupCard from '@/components/ImgGroupCard.vue'
-
 
 const report = ref<any>({})
 const showReport = ref(false)
 const showRawReport = ref(false)
-const imageRef = ref(null);
+const ssimThreshold = ref(0)
+const ssimThresholdPercentage = ref(0)
 
 const postedString = ref("posted")
 const sourceString = ref("source")
 const similiarString = ref("similiar")
 
+const calculateCount = (portal: any) => {
+  const count = portal.images.filter((image: any) => image.ssim >= ssimThreshold.value).length
+  return count
+}
+
+const showGroupCard = (portal: any) => {
+  const show = portal.images.some((image: any) => image.ssim >= ssimThreshold.value)
+  return show
+}
+
+watch(ssimThresholdPercentage, (newValue, oldValue) => {
+  ssimThreshold.value = newValue / 100
+});
+
 const copyReport = () => {
   navigator.clipboard.writeText(JSON.stringify(report.value, null, 2))
   showSuccessToast('Report copied to clipboard')
+  // If you want to close the drawer after copying, uncommnet the line below
   // showRawReport.value = false
 }
 
@@ -133,15 +148,21 @@ const orderImages = () => {
 
 const handleReport = (r: any) => {
   report.value = r
+  ssimThreshold.value = report.value.ssim_threshold
+  ssimThresholdPercentage.value = ssimThreshold.value * 100
   console.log(report.value)
   showReport.value = true
   orderImages()
 }
-
 </script>
 
 
+
 <style scoped>
+
+/* main {
+  min-height: ;
+} */
 
 .tabs-report {
   max-width: var(--max-width);
@@ -152,6 +173,13 @@ const handleReport = (r: any) => {
 .report-header-wrapper {
   max-width: var(--max-width);
   margin: 0 auto;
+}
+
+.similarity-header {
+  font-family: var(--secondary-font);
+  font-size: 1.2rem;
+  /* margin-top: 20px; */
+  margin-bottom: 10px;
 }
 
 .report-header {
@@ -168,7 +196,6 @@ const handleReport = (r: any) => {
   margin-bottom: 10px;
   position: relative;
 }
-
 
 .report-header button {
   top: 17px;
@@ -196,6 +223,7 @@ const handleReport = (r: any) => {
   margin-top: 50px;
   margin: 0 auto;
   width: 100%;
+  margin-bottom: 50px;
 }
 
 .main-wrapper {
@@ -209,6 +237,17 @@ const handleReport = (r: any) => {
 
 .btn-copy {
   padding: 10px;
+}
+
+.similarity-input {
+  border-radius: 10px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .similarity-input {
+    display: block;
+  }
 }
 
 </style>

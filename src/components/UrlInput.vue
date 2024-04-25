@@ -2,10 +2,9 @@
   <main>
 
     <div class="header">
-      <p>Input URL of advertisement from supported website</p>
+      <p>Input URL of real estate   advertisement from supported portals</p>
       <p>See <router-link to="/supported_portals" class="link"> supported web portals</router-link> </p>
     </div>
-
         <n-drawer v-model:show="displayImages" style="width: 100%">
             <n-drawer-content :style="{ width: '100%' }">
               <loading v-model:active="isLoading"
@@ -62,11 +61,11 @@ import { NInput, NSpace, NIcon, NButton,
         NInputGroup, NDrawer, NDrawerContent, NImage, NImageGroup  } from 'naive-ui'
 import  { GlobeSearch20Filled } from '@vicons/fluent'
 import { Search } from '@vicons/ionicons5'
-import { showErrorToast } from '@/utils/toast'
 import { serverAddress} from '@/utils/server'
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import axios from 'axios'
+import { showSuccessToast, showErrorToast, showInfoToast } from '@/utils/toast'
 
 interface ImageInfo {
   id: number;
@@ -107,6 +106,8 @@ const disabledBtn = () => {
 const searchImageClick = async () => {
   const selectedImage = imageUrl.value.find((img) => img.selected)
   try {
+    // showInfoToast('Wait untill the images are processed')
+    showInfoToast('Please wait untill process finishes')
     isLoading.value = true
     const response = await axios.post(`${serverAddress}/grisa/upload`, {
       selected_url: selectedImage?.url,
@@ -152,8 +153,9 @@ const handleClick = async () => {
     }
 
     displayImages.value = true
+    showSuccessToast('Images loaded successfully')
   } catch (error) {
-    console.error('ERROR:' + error)
+    showErrorToast('Could not load images')
   }
   finally {
     searchLoading.value = false

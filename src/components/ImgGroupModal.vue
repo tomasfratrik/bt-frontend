@@ -13,24 +13,23 @@
                 <div class="close-wrapper" @click="closeGroupModal">
                     <n-icon :size="50" :component="CloseCircleOutline"/>
                 </div>
-                <!-- <div class="header-domain">
-                    <h2>{{ props.data.domain }}</h2>
-                </div> -->
                 <div class="back-wrapper" @click="closeGroupModal">
                     <h2>{{ props.data.domain }}</h2>
                 </div>
             </template>
-            <!-- Content -->
             <div class="img-cards-wrapper">
-                <div class="img-card" v-for="image in props.data.images" :key="image.id">
-                    <ImgCard scale="small" @closeGroupModal="closeGroupModal" :image="image" :type="props.data.type" />
-                </div>
+                <template class="img-card" v-for="image in props.data.images" :key="image.id">
+                    <div v-if="image.ssim >= props.threshold">
+                        <ImgCard scale="large" @closeGroupModal="closeGroupModal" :image="image" :type="props.data.type" />
+                    </div>
+                </template>
             </div>
             </n-card>
         </n-modal>
-
     </div>
 </template>
+
+
 
 <script setup lang="ts">
 import { ref, defineProps, defineEmits, onMounted, watch } from 'vue'
@@ -38,18 +37,18 @@ import { NIcon, NButton, NModal, NCard } from 'naive-ui'
 import { CloseCircleOutline } from '@vicons/ionicons5'
 import ImgCard from '@/components/ImgCard.vue'
 
-const props = defineProps(['data', 'internalShow'])
+const props = defineProps(['data', 'internalShow', 'threshold'])
 const emit = defineEmits(['close'])
 
 const closeGroupModal = () => {
     emit('close')
 }
 
-
 </script>
 
-<style scoped>
 
+
+<style scoped>
 .back-wrapper {
     position: absolute;
     top: 10px;
@@ -57,8 +56,6 @@ const closeGroupModal = () => {
     background-color: white;
     padding: 10px;
 }
-
-
 
 .header-domain {
     display: absolute;
@@ -68,12 +65,6 @@ const closeGroupModal = () => {
     padding: 10px;
     border-radius: 10px;
 }
-/* 
-.header-wrapper {
-    background-color: blue;
-    width: 100%;
-    height: 100%;
-} */
 
 .img-cards-wrapper {
     display: flex;

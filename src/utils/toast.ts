@@ -22,3 +22,14 @@ export const showSuccessToast = (msg: string) => {
         "pauseOnFocusLoss": false,
     })
 }
+
+export const showInfoToast = (msg: string) => {
+    toast(msg, {
+        "theme": "colored",
+        "type": "info",
+        "position": "top-center",
+        "autoClose": 1500,
+        "pauseOnFocusLoss": false,
+        "dangerouslyHTMLString": true
+    })
+}

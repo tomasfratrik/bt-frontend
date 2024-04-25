@@ -8,7 +8,7 @@
                 <UrlInput @sendData="handleIncomingData"/>
             </n-tab-pane>
             <n-tab-pane name="Image" tab="Image">
-                <Dropzone />
+                <Dropzone @sendData="handleIncomingData " />
             </n-tab-pane>
         </n-tabs>
     </div>
