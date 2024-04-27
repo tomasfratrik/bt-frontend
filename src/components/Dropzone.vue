@@ -28,7 +28,7 @@
                 </n-icon>
             </div>
             <n-text style="font-size: 16px">
-                Click or drag a file to this area to upload
+                Click or drag a png/jpg image into this area to upload
             </n-text>
         </n-upload-dragger>
     </n-upload>

@@ -51,14 +51,15 @@
           </div>
         </div>
         <n-tabs class="tabs-report" type="segment" size="medium" animated>
-            <n-tab-pane name="Your" tab="Your image">
+
+            <n-tab-pane v-if="uploadType == 'url'" name="Your" tab="Your image">
               <div class="report-items">
                 <div class="" v-for="image in getValue(report, 'images.posted_images')" :key="image.position">
                   <ImgCard :type="postedString" :image="image"/>
                 </div>
               </div>
-
             </n-tab-pane>
+
             <n-tab-pane name="source" tab="Source images">
               <p>Images were found while looking at the source of your posted image.</p>
               <div class="report-items">
@@ -94,7 +95,7 @@
 
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import Tabs from '@/components/Tabs.vue'
 import { NTabs, NIcon, NTabPane, NDrawer, NDrawerContent, NButton, 
   NInputNumber, NSlider, NSpace } from 'naive-ui'
@@ -114,6 +115,13 @@ const ssimThresholdPercentage = ref(0)
 const postedString = ref("posted")
 const sourceString = ref("source")
 const similiarString = ref("similiar")
+
+// computed: {
+//   const uploadType = getValue(report, 'upload_type')
+// }
+const uploadType = computed(() => {
+  return getValue(report.value, 'upload_type')
+})
 
 const calculateCount = (portal: any) => {
   const count = portal.images.filter((image: any) => image.ssim >= ssimThreshold.value).length
