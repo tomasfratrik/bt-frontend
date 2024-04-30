@@ -51,12 +51,16 @@
           </div>
         </div>
         <n-tabs class="tabs-report" type="segment" size="medium" animated>
-
-            <n-tab-pane v-if="uploadType == 'url'" name="Your" tab="Your image">
-              <div class="report-items">
+ 
+            <n-tab-pane name="Your" tab="Your image">
+              <div v-if="uploadType == 'url'" class="report-items">
                 <div class="" v-for="image in getValue(report, 'images.posted_images')" :key="image.position">
                   <ImgCard :type="postedString" :image="image"/>
                 </div>
+              </div>
+              <div v-else>
+                <p>You posted image, not advertisement.</p>
+                <p>No result will be shown in this category.</p>
               </div>
             </n-tab-pane>
 
@@ -116,9 +120,6 @@ const postedString = ref("posted")
 const sourceString = ref("source")
 const similiarString = ref("similiar")
 
-// computed: {
-//   const uploadType = getValue(report, 'upload_type')
-// }
 const uploadType = computed(() => {
   return getValue(report.value, 'upload_type')
 })

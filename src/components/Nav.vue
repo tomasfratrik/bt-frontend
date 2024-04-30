@@ -96,7 +96,6 @@ a {
     color: var(--primary-color);
     color: white;
     text-decoration: none;
-
 }
 
 
@@ -178,6 +177,7 @@ nav {
     .nav-wrapper {
         display: block;
         margin: 0;
+        padding: 0;
     }
 
     .hamburger-nav {

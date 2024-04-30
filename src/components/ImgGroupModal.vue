@@ -17,6 +17,11 @@
                     <h2>{{ props.data.domain }}</h2>
                 </div>
             </template>
+            <p class="info">
+                Some images might be sourced directly from the advertisement, with possibly higher resolution,
+                while others, with possibly lower resolution, 
+                could be from pages featuring multiple ads, including the same picture.
+            </p>
             <div class="img-cards-wrapper">
                 <template class="img-card" v-for="image in props.data.images" :key="image.id">
                     <div v-if="image.ssim >= props.threshold">
@@ -49,12 +54,32 @@ const closeGroupModal = () => {
 
 
 <style scoped>
+
+p.info {
+    /* text-align: center; */
+    font-size: 15px;
+    margin-top: 20px;
+    color: grey;
+}
+
 .back-wrapper {
     position: absolute;
     top: 10px;
     left: 10px;
     background-color: white;
     padding: 10px;
+    /* toggle word wrapping */
+    white-space: wrap;
+    max-width: 340px;
+}
+@media (max-width: 420px) {
+    .back-wrapper {
+        max-width: 200px;
+        font-size: 10px;
+    } 
+    p.info {
+        margin-top: 25px;
+    }
 }
 
 .header-domain {

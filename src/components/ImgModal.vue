@@ -1,7 +1,5 @@
 <template>
     <div class="img-modal">
-        <!-- <div class="backdrop" @click.self="closeModal">
-            <div class="modal-window"> -->
         <n-modal v-model:show="props.internalShow">
             <n-card
             style="max-width: 900px; min-height: 600px; background-color: var(--bg-clr);"

@@ -1,9 +1,6 @@
 <template>
     <div class="tabs-wrapper">
-        <!-- <n-tabs v-model:selectedTab="selectedTab" type="segment" animated :theme-overrides="tabsThemeOverrides"> -->
-        <!-- <n-tabs :size='tabsSize' type="segment" animated :theme-overrides="tabsThemeOverrides"> -->
         <n-tabs type="segment" size="large" animated>
-            <!-- <n-tabs type="segment"> -->
             <n-tab-pane name="URL" tab="URL">
                 <UrlInput @sendData="handleIncomingData"/>
             </n-tab-pane>
