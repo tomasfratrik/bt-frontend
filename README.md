@@ -1,28 +1,11 @@
-# bt-frontend
+# Frontend of bachelor thesis
+Frontend for the evaluation backend
 
-This template should help get you started developing with Vue 3 in Vite.
+## Important
+NOTE: You have to change backend server in `src/utils/server.ts` depending on your needs!
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
+## Local development
+### Install deps
 ```sh
 npm install
 ```
@@ -38,3 +21,22 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### Hosting
+- hosted on Heroku
+- URL: `https://bt-frontend-6397f2521b23.herokuapp.com/`
+
+#### Heroku plugins
+```
+heroku-builds 0.0.29
+heroku-fork 4.1.29
+heroku-repo 1.0.14
+```
+
+#### Heroku buildpacks
+```
+heroku/nodejs
+```
+
+
+
