@@ -19,7 +19,7 @@
         </template>
 
         <div class="raw-report">
-          <pre>{{ JSON.stringify(report, null, 2) }}</pre>
+          <pre>{{ JSON.stringify(origReport, null, 2) }}</pre>
         </div>
 
         <template #footer>
@@ -35,10 +35,31 @@
       <div v-if="showReport">
         <div class="report-header-wrapper">
           <div class="report-header">
-            <div>
-              <!-- empty div -->
+            <div class="country-select">
+              <CountrySelect :selectedCountry="selectedCountry" 
+                              @change="changeCountry">
+              </CountrySelect> 
+              <div @click="resetCountry" class="country-reset">
+                <n-popover trigger="hover">
+                  <template #trigger>
+                    <n-icon size="20" :component="Reload"/>
+                  </template>
+                    <span class="info">Reset country to original origin</span>
+                </n-popover>
+              </div>
+              <div class="country-info">
+                <n-popover trigger="click">
+                  <template #trigger>
+                    <n-icon size="20" :component="Information"/>
+                  </template>
+                  <div class="info">
+                    <span>Based on evaluation we estimated original country of advertisement to be {{ originalCountry }}.</span><br>
+                    <span>But you can change this value, to see results as if it originated from that country</span>
+                  </div>
+                </n-popover>
+              </div>
             </div>
-            <div>
+            <div class="report-header-full">
               Report
             </div>
             <n-button @click="showRawReport = true">
@@ -87,9 +108,6 @@
                 </div>
               </n-tab-pane>
           </n-tabs>
-
-
-
       </div>
     </div>
 
@@ -99,26 +117,72 @@
 
 
 <script setup lang="ts">
+import _ from 'lodash'
 import { computed, ref, watch } from 'vue'
-import Tabs from '@/components/Tabs.vue'
-import { NTabs, NIcon, NTabPane, NDrawer, NDrawerContent, NButton, 
-  NInputNumber, NSlider, NSpace } from 'naive-ui'
+import axios from 'axios'
+import { NTabs, NIcon, NTabPane, 
+         NDrawer, NDrawerContent, NButton, 
+         NInputNumber, NSlider, NSpace, NPopover } from 'naive-ui'
+import { Clipboard } from '@vicons/ionicons5'
+import { Information } from '@vicons/ionicons5'
+import { Reload } from '@vicons/ionicons5'
+import { getValue } from '@/utils/utils'
+import { serverAddress } from '@/utils/server'
+import { tldCountries } from '@/utils/tldCountries'
+import { showSuccessToast } from '@/utils/toast'
+import { showInfoToastLong } from '@/utils/toast'
 import ImgCard from '@/components/ImgCard.vue'
 import ImgGroupCard from '@/components/ImgGroupCard.vue'
-import { Clipboard } from '@vicons/ionicons5'
-import { getValue } from '@/utils/utils'
-import { showSuccessToast } from '@/utils/toast'
-import _ from 'lodash'
+import Tabs from '@/components/Tabs.vue'
+import CountrySelect from '@/components/CountrySelect.vue'
+
 
 const report = ref<any>({})
+const origReport = ref<any>({})
 const showReport = ref(false)
 const showRawReport = ref(false)
 const ssimThreshold = ref(0)
 const ssimThresholdPercentage = ref(0)
+const selectedCountry = ref('')
+const originalCountry = ref('')
+const originalTLD = ref('')
+const tld = ref('')
 
 const postedString = ref("posted")
 const sourceString = ref("source")
 const similiarString = ref("similiar")
+
+
+const getDefaultCountry = (report: any) => {
+  const tld = Object.keys(report.baseline.tld)[0]
+  return tld
+}
+
+const resetCountry = () => {
+  selectedCountry.value = originalTLD.value
+  orderImages()
+}
+
+const changeCountry = async (tld: string) => {
+  const country = Object.fromEntries([[tld, tldCountries[tld as keyof typeof tldCountries]]])
+
+  try {
+    const response = await axios.post(`${serverAddress}/grisa/set/country`, 
+        { 
+          report: origReport.value,
+          country: country 
+        }
+    )
+
+    report.value = response.data
+    selectedCountry.value = tld
+    orderImages()
+    showSuccessToast('Origin country changed')
+  }
+  catch (error) {
+    console.log(error)
+  }
+}
 
 const uploadType = computed(() => {
   return getValue(report.value, 'upload_type')
@@ -141,8 +205,6 @@ watch(ssimThresholdPercentage, (newValue, oldValue) => {
 const copyReport = () => {
   navigator.clipboard.writeText(JSON.stringify(report.value, null, 2))
   showSuccessToast('Report copied to clipboard')
-  // If you want to close the drawer after copying, uncommnet the line below
-  // showRawReport.value = false
 }
 
 const orderImages = () => {
@@ -155,10 +217,27 @@ const orderImages = () => {
   report.value.images.similar_images = orderedSimilarImages
 } 
 
+const getCountryFromTLD = (tld: string) => {
+  return tldCountries[tld as keyof typeof tldCountries]
+}
+
+
 const handleReport = (r: any) => {
-  report.value = r
+  origReport.value = r
+  report.value = JSON.parse(JSON.stringify(r))
+
+  // set only once
+  if (selectedCountry.value === '') {
+    tld.value = getDefaultCountry(report.value)
+    originalCountry.value = getCountryFromTLD(tld.value)
+    originalTLD.value = tld.value
+  }
+
+  selectedCountry.value = getDefaultCountry(report.value)
+
   ssimThreshold.value = report.value.ssim_threshold
   ssimThresholdPercentage.value = ssimThreshold.value * 100
+
   console.log(report.value)
   showReport.value = true
   orderImages()
@@ -168,10 +247,6 @@ const handleReport = (r: any) => {
 
 
 <style scoped>
-
-/* main {
-  min-height: ;
-} */
 
 .tabs-report {
   max-width: var(--max-width);
@@ -207,7 +282,7 @@ const handleReport = (r: any) => {
 }
 
 .report-header button {
-  top: 17px;
+  top: 14px;
   right: 10px;
   position: absolute;
   background-color: white;
@@ -217,6 +292,52 @@ const handleReport = (r: any) => {
   font-family: var(--secondary-font);
   cursor: pointer;
   transition: all 0.2s;
+}
+
+.country-select {
+  position: absolute;
+  top: 14px;
+  left: 10px;
+  display: flex;
+}
+
+
+.country-select .country-info {
+  border: 1px solid #C5C5C5;
+  border-radius: 3px;
+  height: 34px;
+  width: 34px;
+  display: flex;  
+  justify-content: center;
+  align-items: center;
+  background-color: var(--secondary-color);
+  color:white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.country-info:hover {
+  background-color: var(--primary-color);
+}
+
+.country-reset {
+  border: 1px solid #C5C5C5;
+  border-radius: 3px;
+  height: 34px;
+  width: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.country-reset:hover {
+  background-color: #f0f0f0;
+}
+
+.country-info .info {
+  margin-bottom: 15px;
 }
 
 .report-items {
@@ -257,6 +378,37 @@ const handleReport = (r: any) => {
   .similarity-input {
     display: block;
   }
+
+  .report-header-full {
+    display: none;
+  }
+  .report-header{
+    height: 70px;
+  }
+
 }
 
+@media (max-width: 900px) {
+  .info {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 420) {
+  .info {
+    max-width: 200px;
+  }
+}
+
+@media(max-width: 410px) {
+  .info {
+    max-width: 150px;
+  }
+}
+
+@media(max-width: 380px) {
+  .report-header button {
+    display: none
+  }
+}
 </style>

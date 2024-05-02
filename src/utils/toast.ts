@@ -33,3 +33,14 @@ export const showInfoToast = (msg: string) => {
         "dangerouslyHTMLString": true
     })
 }
+
+export const showInfoToastLong = (msg: string) => {
+    toast(msg, {
+        "theme": "colored",
+        "type": "info",
+        "position": "top-center",
+        "autoClose": 3000,
+        "pauseOnFocusLoss": false,
+        "dangerouslyHTMLString": true
+    })
+}

@@ -32,4 +32,15 @@
     font-size: 1.2rem;
 }
 
+@media (max-width: 768px) {
+    .footer-wrapper {
+        padding: 0;
+
+    }
+
+    .footer-wrapper span {
+        font-size: 0.8rem;
+    }
+}
+
 </style>

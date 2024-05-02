@@ -13,13 +13,16 @@
                     <h5>{{ props.data.count }}x</h5>
                 </div>
                 <div class="score-bar">
+                            <!-- type="circle"
+                            :stroke-width="10"
+                            :color="getColorFromPercentage(image.total_points_percentage)"
+                            :percentage="image.total_points_percentage" -->
                     <n-progress
                         type="circle"
-                        :show-indicator="false"
-                        status="success"
                         :color = "getColorFromPercentage(props.data.images[0].total_points_percentage)"
                         :stroke-width="15"
                         :percentage="props.data.images[0].total_points_percentage"
+                        :show-indicator="false"
                     />
                 </div>
                 <img :src="props.data.images[0].display_photo_url" alt="image" />
@@ -112,13 +115,11 @@ button {
     z-index: 1;
     display: flex;
     transition: all 0.3s;
-
 }
 
 .card-wrapper {
     min-width: 240px;
     max-width: 270px;
-    /* height: 330px; */
     width: 260px;
     position: relative;
     border-radius: 15px;
