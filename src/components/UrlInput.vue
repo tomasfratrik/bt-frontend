@@ -106,7 +106,7 @@ const disabledBtn = () => {
 const searchImageClick = async () => {
   const selectedImage = imageUrl.value.find((img) => img.selected)
   try {
-    showInfoToast('Please wait untill process finishes')
+    showInfoToast('Please wait until process finishes')
     isLoading.value = true
     const response = await axios.post(`${serverAddress}/grisa/upload`, {
       selected_url: selectedImage?.url,
