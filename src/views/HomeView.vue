@@ -37,7 +37,8 @@
           <div class="report-header">
             <div class="country-select">
               <CountrySelect :selectedCountry="selectedCountry" 
-                              @change="changeCountry">
+                             :change="changeCountryAutomatically"
+                             @change="changeCountry">
               </CountrySelect> 
               <div @click="resetCountry" class="country-reset">
                 <n-popover trigger="hover">
@@ -53,7 +54,12 @@
                     <n-icon size="20" :component="Information"/>
                   </template>
                   <div class="info">
-                    <span>Based on evaluation we estimated original country of advertisement to be {{ originalCountry }}.</span><br>
+                    <span>Based on evaluation we estimated original country of advertisement to be 
+                      <span v-for="(country, tld) in originalCountries" :key="tld">
+                        {{ country }} 
+                        <span> </span>
+                      </span>
+                    </span><br>
                     <span>But you can change this value, to see results as if it originated from that country</span>
                   </div>
                 </n-popover>
@@ -69,6 +75,14 @@
                 <n-icon size="20" :component="Clipboard"/>
               </template>
             </n-button>
+          </div>
+          <div class="countries-info" v-if="Object.keys(report.baseline.tld).length > 1">
+            <n-alert title="Origin countries are now set to:" type="info">
+              <span v-for="(country, tld) in originalCountries" :key="tld">
+                {{ country }} 
+                <span> </span>
+              </span>
+            </n-alert>
           </div>
         </div>
         <n-tabs class="tabs-report" type="segment" size="medium" animated>
@@ -121,7 +135,7 @@ import _ from 'lodash'
 import { computed, ref, watch } from 'vue'
 import axios from 'axios'
 import { NTabs, NIcon, NTabPane, 
-         NDrawer, NDrawerContent, NButton, 
+         NDrawer, NDrawerContent, NButton, NAlert,
          NInputNumber, NSlider, NSpace, NPopover } from 'naive-ui'
 import { Clipboard } from '@vicons/ionicons5'
 import { Information } from '@vicons/ionicons5'
@@ -129,7 +143,7 @@ import { Reload } from '@vicons/ionicons5'
 import { getValue } from '@/utils/utils'
 import { serverAddress } from '@/utils/server'
 import { tldCountries } from '@/utils/tldCountries'
-import { showSuccessToast } from '@/utils/toast'
+import { showErrorToast, showSuccessToast } from '@/utils/toast'
 import { showInfoToastLong } from '@/utils/toast'
 import ImgCard from '@/components/ImgCard.vue'
 import ImgGroupCard from '@/components/ImgGroupCard.vue'
@@ -139,18 +153,19 @@ import CountrySelect from '@/components/CountrySelect.vue'
 
 const report = ref<any>({})
 const origReport = ref<any>({})
+const firstReport = ref<any>({})
 const showReport = ref(false)
+const newReport = ref(false)
 const showRawReport = ref(false)
 const ssimThreshold = ref(0)
 const ssimThresholdPercentage = ref(0)
 const selectedCountry = ref('')
-const originalCountry = ref('')
-const originalTLD = ref('')
-const tld = ref('')
+const originalCountries = ref<any>({})
+const originalReportID = ref('')
 
 const postedString = ref("posted")
-const sourceString = ref("source")
-const similiarString = ref("similiar")
+const changeCountryAutomatically = ref(true)
+const currentlyResetting = ref(false)
 
 
 const getDefaultCountry = (report: any) => {
@@ -158,30 +173,60 @@ const getDefaultCountry = (report: any) => {
   return tld
 }
 
-const resetCountry = () => {
-  selectedCountry.value = originalTLD.value
+const resetCountry = async () => {
+  const countries = <any>{}
+  currentlyResetting.value = true
+
+  for (const tld in originalCountries.value) {
+    countries[tld] = tldCountries[tld as keyof typeof tldCountries];
+  }
+  try {
+    const response = await axios.post(`${serverAddress}/grisa/set/country`, 
+        { 
+          report: origReport.value,
+          country: countries,
+        }
+    )
+
+    origReport.value = response.data
+    report.value = JSON.parse(JSON.stringify(response.data))
+    changeCountryAutomatically.value = false
+    selectedCountry.value = getDefaultCountry(report.value)
+    showSuccessToast('Country origin reset sucessfully')
+  }
+  catch (error) {
+    console.log(error)
+    showErrorToast('Error while resetting country')
+  }
   orderImages()
 }
 
 const changeCountry = async (tld: string) => {
+  if (currentlyResetting.value) {
+    currentlyResetting.value = false
+    return
+  }
   const country = Object.fromEntries([[tld, tldCountries[tld as keyof typeof tldCountries]]])
 
   try {
     const response = await axios.post(`${serverAddress}/grisa/set/country`, 
         { 
           report: origReport.value,
-          country: country 
+          country: country,
         }
     )
 
-    report.value = response.data
+    origReport.value = response.data
+    report.value = JSON.parse(JSON.stringify(response.data))
+    changeCountryAutomatically.value = true
     selectedCountry.value = tld
-    orderImages()
     showSuccessToast('Origin country changed')
   }
   catch (error) {
     console.log(error)
+    showErrorToast('Error while changing country')
   }
+  orderImages()
 }
 
 const uploadType = computed(() => {
@@ -221,18 +266,24 @@ const getCountryFromTLD = (tld: string) => {
   return tldCountries[tld as keyof typeof tldCountries]
 }
 
-
+// ******************
+// REPORT INCOMING
+// ******************
 const handleReport = (r: any) => {
+
   origReport.value = r
   report.value = JSON.parse(JSON.stringify(r))
 
-  // set only once
-  if (selectedCountry.value === '') {
-    tld.value = getDefaultCountry(report.value)
-    originalCountry.value = getCountryFromTLD(tld.value)
-    originalTLD.value = tld.value
+  if (isThisNewReport()) { // actually handleReport is always for new reports now
+    // Set original countries, so user can then do reset
+    firstReport.value = JSON.parse(JSON.stringify(r))
+    originalCountries.value = {}
+    for (const tld in report.value.baseline.tld) {
+      originalCountries.value[tld] = tldCountries[tld as keyof typeof tldCountries];
+    }
   }
 
+  // select 1. country
   selectedCountry.value = getDefaultCountry(report.value)
 
   ssimThreshold.value = report.value.ssim_threshold
@@ -241,6 +292,19 @@ const handleReport = (r: any) => {
   console.log(report.value)
   showReport.value = true
   orderImages()
+}
+
+
+const isThisNewReport = () => {
+
+  // There was no report present, just blank home page or they dont match
+  if (originalReportID.value === '' || originalReportID.value !== report.value.id) {
+    originalReportID.value = report.value.id
+    newReport.value = true
+    return true
+  }
+  newReport.value = false
+  return false
 }
 </script>
 
@@ -338,6 +402,10 @@ const handleReport = (r: any) => {
 
 .country-info .info {
   margin-bottom: 15px;
+}
+
+.countries-info {
+  margin-bottom: 10px;
 }
 
 .report-items {

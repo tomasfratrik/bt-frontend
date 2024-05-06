@@ -26,7 +26,7 @@ interface Country {
 }
 
 const emit = defineEmits(['change'])
-const props = defineProps(['selectedCountry'])
+const props = defineProps(['selectedCountry', 'change'])
 const sc = ref(props.selectedCountry)
 
 watch(() => sc.value, (newValue) => {
