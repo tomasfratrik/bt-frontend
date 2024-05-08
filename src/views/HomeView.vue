@@ -206,6 +206,11 @@ const changeCountry = async (tld: string) => {
     currentlyResetting.value = false
     return
   }
+
+  if(newReport.value) {
+    newReport.value = false
+    return
+  }
   const country = Object.fromEntries([[tld, tldCountries[tld as keyof typeof tldCountries]]])
 
   try {
@@ -253,6 +258,7 @@ const copyReport = () => {
 }
 
 const orderImages = () => {
+  console.log('ordering images')
   const sourceImages = getValue(report.value, 'images.source_images')
   const orderedSourceImages = _.orderBy(sourceImages, ['rank'], ['asc'])
   report.value.images.source_images = orderedSourceImages
@@ -270,42 +276,25 @@ const getCountryFromTLD = (tld: string) => {
 // REPORT INCOMING
 // ******************
 const handleReport = (r: any) => {
-
   origReport.value = r
   report.value = JSON.parse(JSON.stringify(r))
+  firstReport.value = 
 
-  if (isThisNewReport()) { // actually handleReport is always for new reports now
-    // Set original countries, so user can then do reset
-    firstReport.value = JSON.parse(JSON.stringify(r))
-    originalCountries.value = {}
-    for (const tld in report.value.baseline.tld) {
-      originalCountries.value[tld] = tldCountries[tld as keyof typeof tldCountries];
-    }
+  newReport.value = true
+  originalCountries.value = {}
+  for (const tld in report.value.baseline.tld) {
+    originalCountries.value[tld] = tldCountries[tld as keyof typeof tldCountries];
   }
-
-  // select 1. country
   selectedCountry.value = getDefaultCountry(report.value)
 
   ssimThreshold.value = report.value.ssim_threshold
   ssimThresholdPercentage.value = ssimThreshold.value * 100
 
-  console.log(report.value)
+  console.log('REPORT:' + report.value)
   showReport.value = true
   orderImages()
 }
 
-
-const isThisNewReport = () => {
-
-  // There was no report present, just blank home page or they dont match
-  if (originalReportID.value === '' || originalReportID.value !== report.value.id) {
-    originalReportID.value = report.value.id
-    newReport.value = true
-    return true
-  }
-  newReport.value = false
-  return false
-}
 </script>
 
 
