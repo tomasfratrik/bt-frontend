@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This component is a modal that displays a group of images
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <div class="img-group-modal">
         <n-modal v-model:show="props.internalShow">

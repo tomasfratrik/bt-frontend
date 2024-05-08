@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This file contains the list of countries and their TLDs.
+ * 
+ * @author Tomas Fratrik
+ */
+
 export const tldCountries = {
     "ac": "Ascension Island",
     "ad": "Andorra",

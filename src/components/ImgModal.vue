@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This component is a modal that displays information about an image
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <div class="img-modal">
         <n-modal v-model:show="props.internalShow">
@@ -93,7 +101,6 @@ const emit = defineEmits(['closeModal', 'closeCurrentModal'])
 
 const props = defineProps(['image', 'type', 'internalShow'])
 
-
 const postedString = ref("posted")
 const sourceString = ref("source")
 const similiarString = ref("similiar")
@@ -108,6 +115,7 @@ const closeCurrentModal = () => {
 
 const showDetails = ref<{ [moduleName: string]: boolean }>({})
 
+// create dict with points, if true then show details of that point
 onMounted(() => {
     for (const point_module in props.image.point_modules_detected) {
         showDetails.value[point_module] = false

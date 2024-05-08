@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This component lets you input a URL of a real estate advertisement
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
   <main>
 
@@ -56,7 +64,7 @@
 
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, watch } from 'vue'
+import { ref, defineEmits } from 'vue'
 import { NInput, NSpace, NIcon, NButton, 
         NInputGroup, NDrawer, NDrawerContent, NImage, NImageGroup  } from 'naive-ui'
 import  { GlobeSearch20Filled } from '@vicons/fluent'
@@ -88,6 +96,8 @@ const saved_search_url = ref('')
 const displayImages = ref(false)
 const imageUrl = ref<ImageInfo[]>([]);
 
+
+// select image
 const handleImageClick = (image: ImageInfo) => {
   imageUrl.value.forEach((img) => {
     img.selected = false
@@ -103,6 +113,7 @@ const disabledBtn = () => {
   return imageUrl.value.find((img) => img.selected) === undefined
 }
 
+// post image to backend, and emit the respond
 const searchImageClick = async () => {
   const selectedImage = imageUrl.value.find((img) => img.selected)
   try {
@@ -128,6 +139,8 @@ const searchImageClick = async () => {
   }
 }
 
+
+// send image to backend and get image urls that will be displayed
 const handleClick = async () => {
   imageUrl.value = []
   btnIsDisabled.value = true

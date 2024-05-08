@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This component is a card that displays an image and some information about it
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <div class="ImgCard">
         <ImgModal @closeCurrentModal="closeCurrentModal" :internalShow="showModal" :type="props.type" :image="props.image" @closeModal="closeModal" />
@@ -44,11 +52,14 @@ const showModal = ref(false)
 const toggleModal = () => {
     showModal.value = !showModal.value
 }
+
+// Clone even group moda
 const closeModal = () => {
     showModal.value = false
     emit('closeGroupModal')
 }
 
+// clone only this modal
 const closeCurrentModal = () => {
     showModal.value = false
 }

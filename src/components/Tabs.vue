@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This is the main tab select component of the application
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <div class="tabs-wrapper">
         <n-tabs type="segment" size="large" animated>
@@ -31,7 +39,6 @@ const handleIncomingData = (report: any) => {
     width: 100%;
     max-width: 800px;
     padding: 20px;
-    /* background-color: #f0f0f0; */
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -39,14 +46,6 @@ const handleIncomingData = (report: any) => {
     text-transform: uppercase;
     font-size: 1.2rem;
 
-}
-/* Change color of selected tab to blue */
-.tab-pane {
-    /* color: blue; */
-    /* background-color: #f0f0f0;
-    height: 200px; */
-    background-color: blue;
-    color: red;
 }
 </style>
   

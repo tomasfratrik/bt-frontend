@@ -1,3 +1,10 @@
+/**
+ * My Vue Component
+ * 
+ * This View that displays information about the project.
+ * 
+ * @author Tomas Fratrik
+ */
 <template>
   <div class="about">
     <div class="wrapper">

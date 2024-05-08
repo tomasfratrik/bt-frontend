@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This is the main navigation of the application
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <div class="main-nav-wrapper">
         <nav>

@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This component is a dropzone for uploading images
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <loading v-model:active="isLoading"
         :can-cancel="false"
@@ -79,6 +87,7 @@ const uploadImg = async () => {
     }
 }
 
+// Clear uploaded file
 const clearFileList = () => {
     uploadedImages.value = []
     fileListLength.value = 0

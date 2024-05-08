@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This View shows which portals are supported
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <div class="sp">
         <main>
@@ -42,7 +50,6 @@
 import { ref, markRaw } from 'vue'
 import { NTable, NButton, NIcon } from 'naive-ui'
 import { Book20Filled } from '@vicons/fluent'
-// import { Book } from ''
 import  RealityCZ  from '@/components/tutorials/RealityCZ.vue'
 import  NehnutelnostiSK  from '@/components/tutorials/NehnutelnostiSK.vue'
 

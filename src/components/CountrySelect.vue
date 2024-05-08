@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This component is a select input for selecting a country
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <div class="countrySelect">
         <main>
@@ -29,6 +37,7 @@ const emit = defineEmits(['change'])
 const props = defineProps(['selectedCountry', 'change'])
 const sc = ref(props.selectedCountry)
 
+// watch if value cahgnes
 watch(() => sc.value, (newValue) => {
     emit('change', newValue)
 })

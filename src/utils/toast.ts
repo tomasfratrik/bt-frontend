@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This file contains the functions for showing toasts.
+ * 
+ * @author Tomas Fratrik
+ */
+
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 

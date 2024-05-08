@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This is the card component that displays the image group
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <div class="img-group-card">
         <div class="card-wrapper">

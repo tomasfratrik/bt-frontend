@@ -1,3 +1,8 @@
+/**
+ * Server to serve static files
+ * 
+ * Author: Tomas Fratrik
+ */
 const express = require('express');
 const path = require('path');
 
@@ -7,7 +12,6 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Catch all routes and redirect to index.html
-
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });

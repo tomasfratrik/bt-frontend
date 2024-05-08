@@ -1,3 +1,10 @@
+/**
+ * My Vue Component
+ * 
+ * This component is the main view of the application. It is responsible for displaying the report
+ * 
+ * @author Tomas Fratrik
+ */
 
 <template>
   <main>
@@ -173,6 +180,8 @@ const getDefaultCountry = (report: any) => {
   return tld
 }
 
+
+// Handle reseting of country
 const resetCountry = async () => {
   const countries = <any>{}
   currentlyResetting.value = true
@@ -201,7 +210,10 @@ const resetCountry = async () => {
   orderImages()
 }
 
+// Auto triggers when value of selectedCountry is changed
 const changeCountry = async (tld: string) => {
+  // Because it auto triggers, there are cases where we don't want
+  // to change country
   if (currentlyResetting.value) {
     currentlyResetting.value = false
     return
@@ -211,6 +223,7 @@ const changeCountry = async (tld: string) => {
     newReport.value = false
     return
   }
+
   const country = Object.fromEntries([[tld, tldCountries[tld as keyof typeof tldCountries]]])
 
   try {
@@ -237,17 +250,17 @@ const changeCountry = async (tld: string) => {
 const uploadType = computed(() => {
   return getValue(report.value, 'upload_type')
 })
-
+// count of ads within group
 const calculateCount = (portal: any) => {
   const count = portal.images.filter((image: any) => image.ssim >= ssimThreshold.value).length
   return count
 }
-
+// show if ssim is above threshold
 const showGroupCard = (portal: any) => {
   const show = portal.images.some((image: any) => image.ssim >= ssimThreshold.value)
   return show
 }
-
+// if ssim is changed, update threshold
 watch(ssimThresholdPercentage, (newValue, oldValue) => {
   ssimThreshold.value = newValue / 100
 });
@@ -258,7 +271,6 @@ const copyReport = () => {
 }
 
 const orderImages = () => {
-  console.log('ordering images')
   const sourceImages = getValue(report.value, 'images.source_images')
   const orderedSourceImages = _.orderBy(sourceImages, ['rank'], ['asc'])
   report.value.images.source_images = orderedSourceImages
@@ -274,17 +286,20 @@ const getCountryFromTLD = (tld: string) => {
 
 // ******************
 // REPORT INCOMING
+// - main function to handle new report
 // ******************
 const handleReport = (r: any) => {
   origReport.value = r
   report.value = JSON.parse(JSON.stringify(r))
-  firstReport.value = 
+  firstReport.value = report.value 
+  newReport.value = true // for changeCountry to return if new report is incoming 
 
-  newReport.value = true
+  // set original countries (for reset button)
   originalCountries.value = {}
   for (const tld in report.value.baseline.tld) {
     originalCountries.value[tld] = tldCountries[tld as keyof typeof tldCountries];
   }
+
   selectedCountry.value = getDefaultCountry(report.value)
 
   ssimThreshold.value = report.value.ssim_threshold
@@ -315,7 +330,6 @@ const handleReport = (r: any) => {
 .similarity-header {
   font-family: var(--secondary-font);
   font-size: 1.2rem;
-  /* margin-top: 20px; */
   margin-bottom: 10px;
 }
 

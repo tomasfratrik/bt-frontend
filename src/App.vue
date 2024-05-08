@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This is the main component of the application
+ * 
+ * @author Tomas Fratrik
+ */
+
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import Nav from '@/components/Nav.vue'

@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This is the footer of the application
+ * 
+ * @author Tomas Fratrik
+ */
+
 <template>
     <div class="root-footer">
         <div class="footer-wrapper">

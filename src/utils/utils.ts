@@ -1,3 +1,11 @@
+/**
+ * My Vue Component
+ * 
+ * This file contains utility functions.
+ * 
+ * @author Tomas Fratrik
+ */
+
 import _ from 'lodash'
 
 export const getValue = (object: any, string: string, defaultValue =  '') => {
