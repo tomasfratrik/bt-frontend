@@ -156,6 +156,7 @@ import ImgCard from '@/components/ImgCard.vue'
 import ImgGroupCard from '@/components/ImgGroupCard.vue'
 import Tabs from '@/components/Tabs.vue'
 import CountrySelect from '@/components/CountrySelect.vue'
+import { get } from 'node_modules/axios/index.cjs'
 
 
 const report = ref<any>({})
@@ -200,6 +201,17 @@ const resetCountry = async () => {
     origReport.value = response.data
     report.value = JSON.parse(JSON.stringify(response.data))
     changeCountryAutomatically.value = false
+
+    /**
+     * CurrentlyResestt is set to false defaulty by changeCountry
+     * But if we reset country to the same country (press reset button twice)
+     * then the changeCountry function will not be called and we need to set it to false
+     * manualy
+     */
+    if(selectedCountry.value === getDefaultCountry(report.value)) {
+      currentlyResetting.value = false
+    }
+
     selectedCountry.value = getDefaultCountry(report.value)
     showSuccessToast('Country origin reset sucessfully')
   }
@@ -300,12 +312,23 @@ const handleReport = (r: any) => {
     originalCountries.value[tld] = tldCountries[tld as keyof typeof tldCountries];
   }
 
+  /**
+   * Same case as in resetCountry function
+   * newReport is changes to false by changCountry defaulty
+   * but if we change coutry from '' then this function is not triggered
+   * and therefore we have to do it manually
+   */
+  if (selectedCountry.value === '') {
+    newReport.value = false
+  }
+
   selectedCountry.value = getDefaultCountry(report.value)
 
   ssimThreshold.value = report.value.ssim_threshold
   ssimThresholdPercentage.value = ssimThreshold.value * 100
 
-  console.log('REPORT:' + report.value)
+  // log report
+  console.log(report.value)
   showReport.value = true
   orderImages()
 }
