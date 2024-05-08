@@ -156,7 +156,6 @@ import ImgCard from '@/components/ImgCard.vue'
 import ImgGroupCard from '@/components/ImgGroupCard.vue'
 import Tabs from '@/components/Tabs.vue'
 import CountrySelect from '@/components/CountrySelect.vue'
-import { get } from 'node_modules/axios/index.cjs'
 
 
 const report = ref<any>({})
